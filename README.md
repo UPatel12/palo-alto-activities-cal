@@ -93,21 +93,6 @@ Covers July through Labor Day and refreshes weekly.
 # Install dependencies
 pip install -r requirements.txt
 
-# Copy and fill in credentials (optional — scraper works without Bright Data)
-cp .env.example .env
-```
-
-### Bright Data (optional)
-Some sites block direct requests. If you have a [Bright Data](https://brightdata.com) Scraping Browser account, add your credentials to `.env`:
-
-```
-BRIGHTDATA_CUSTOMER_ID=your_customer_id
-BRIGHTDATA_ZONE=scraping_browser
-BRIGHTDATA_ZONE_PASSWORD=your_zone_password
-```
-
-The scraper works fine without it — it just falls back to direct requests.
-
 ---
 
 ## Usage
@@ -145,7 +130,7 @@ scraper.py              # Main orchestrator — runs all scrapers, cleans, dedup
 generate_outputs.py     # Generates HTML calendar and ICS from CSV
 sources/
   libraries.py          # Library event scrapers (BiblioCommons)
-  city_events.py        # City calendar scrapers + Bright Data integration
+  city_events.py        # City calendar scrapers
   museums.py            # Museum and attraction event scrapers
   farms_outdoors.py     # Farm and outdoor venue scrapers
   eventbrite.py         # Eventbrite scraper (disabled — blocked without headless browser)

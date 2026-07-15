@@ -1,6 +1,5 @@
-"""Scrape city event calendars via Bright Data."""
+"""Scrape city event calendars."""
 
-import os
 import re
 from datetime import datetime, timedelta
 
@@ -60,8 +59,8 @@ _HEADERS = {
 }
 
 
-def _direct_fetch(url: str) -> str | None:
-    """Fetch a URL directly without proxy."""
+def fetch_with_brightdata(url: str) -> str | None:
+    """Fetch a URL via direct HTTP request."""
     try:
         resp = requests.get(url, timeout=30, headers=_HEADERS)
         resp.raise_for_status()
@@ -69,30 +68,6 @@ def _direct_fetch(url: str) -> str | None:
     except requests.RequestException as e:
         print(f"  Warning: Direct fetch failed for {url}: {e}")
         return None
-
-
-def fetch_with_brightdata(url: str) -> str | None:
-    """Fetch a URL using Bright Data Scraping Browser proxy, falling back to direct request."""
-    customer_id = os.getenv("BRIGHTDATA_CUSTOMER_ID")
-    zone = os.getenv("BRIGHTDATA_ZONE", "scraping_browser")
-    zone_password = os.getenv("BRIGHTDATA_ZONE_PASSWORD")
-
-    if customer_id and zone_password and customer_id != "YOUR_CUSTOMER_ID_HERE":
-        # Try Bright Data Scraping Browser proxy
-        proxy_url = (
-            f"http://brd-customer-{customer_id}-zone-{zone}:"
-            f"{zone_password}@brd.superproxy.io:22225"
-        )
-        proxies = {"http": proxy_url, "https": proxy_url}
-        try:
-            resp = requests.get(url, proxies=proxies, timeout=60, headers=_HEADERS)
-            resp.raise_for_status()
-            return resp.text
-        except requests.RequestException as e:
-            print(f"  Warning: Bright Data failed, trying direct: {e}")
-            return _direct_fetch(url)
-    else:
-        return _direct_fetch(url)
 
 
 def parse_city_events_page(html: str, source: dict) -> list[dict]:

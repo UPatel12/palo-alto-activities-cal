@@ -474,15 +474,6 @@ def main():
     print(f"  {datetime.now().strftime('%B %d, %Y %I:%M %p')}")
     print("=" * 60)
 
-    if not args.recurring:
-        bd_customer = os.getenv("BRIGHTDATA_CUSTOMER_ID")
-        bd_password = os.getenv("BRIGHTDATA_ZONE_PASSWORD")
-        if bd_customer and bd_password and bd_customer != "YOUR_CUSTOMER_ID_HERE":
-            print(f"\n  Bright Data proxy configured (with direct fallback)")
-        else:
-            print(f"\n  No Bright Data credentials — using direct requests")
-            print(f"  (Set BRIGHTDATA_CUSTOMER_ID and BRIGHTDATA_ZONE_PASSWORD in .env)")
-
     # Scrape
     df = scrape_all_sources(recurring_only=args.recurring)
 
