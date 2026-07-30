@@ -102,16 +102,20 @@ A phone-first page that regroups the calendar into how you actually plan:
 **Places** you can turn up to, **Every week** regulars, and **What's on** by date.
 Filter by free-only and drive time.
 
+To refresh it after a scrape:
+
 ```bash
-# Rebuild after a scrape, then publish
-python generate_app.py --standalone --out output/index.html
-git add -f output/index.html && git commit -m "Update app"
-git subtree push --prefix output origin gh-pages   # or push index.html to gh-pages
+python3 scraper.py     # pull fresh events
+./publish.sh           # rebuild the page and push it live
 ```
 
-The `--standalone` flag matters: without it the page is emitted as a fragment with
-no `<head>`, so a browser gets no viewport meta tag and renders it at desktop width
-on phones.
+`publish.sh` builds the `gh-pages` branch with git plumbing, so it never checks out
+a branch or touches your working tree.
+
+The `--standalone` flag it passes matters: without it the page is emitted as a
+fragment with no `<head>`, because the Artifact host supplies one. Served from a
+plain web host, that fragment has no viewport meta tag and renders at desktop
+width on a phone.
 
 ---
 
