@@ -38,8 +38,10 @@ COLUMNS = [
 OUTPUT_DIR = Path(__file__).parent / "output"
 
 
-SUMMER_END = datetime(2026, 9, 7).date()  # Labor Day 2026
-WEEKS_AHEAD = max(8, (SUMMER_END - datetime.now().date()).days // 7 + 1)
+WINDOW_END = datetime(2026, 10, 31).date()  # Halloween 2026
+# Round up so scrapers reach at least WINDOW_END; the exact window is enforced
+# afterwards by filter_date_window().
+WEEKS_AHEAD = max(1, -(-(WINDOW_END - datetime.now().date()).days // 7))
 
 
 def scrape_all_sources(recurring_only: bool = False) -> pd.DataFrame:
@@ -57,15 +59,15 @@ def scrape_all_sources(recurring_only: bool = False) -> pd.DataFrame:
 
         # Tier 2: City events via web scraping
         print("\n[City Events]")
-        all_events.extend(city_events.scrape_all())
+        all_events.extend(city_events.scrape_all(weeks_ahead=WEEKS_AHEAD))
 
         # Tier 2: Museums & attractions
         print("\n[Museums & Attractions]")
-        all_events.extend(museums.scrape_all())
+        all_events.extend(museums.scrape_all(weeks_ahead=WEEKS_AHEAD))
 
         # Tier 2: Farms & outdoor activities
         print("\n[Farms & Outdoor]")
-        all_events.extend(farms_outdoors.scrape_all())
+        all_events.extend(farms_outdoors.scrape_all(weeks_ahead=WEEKS_AHEAD))
 
         # Eventbrite disabled — blocks direct requests, needs headless browser
         # all_events.extend(eventbrite.scrape_all())
@@ -296,6 +298,8 @@ def filter_junk_rows(df: pd.DataFrame) -> pd.DataFrame:
         r"for adults",
         r"21\+",
         r"nightlife",
+        r"nitelife",
+        r"emo nite",
         r"wine tasting",
         r"bar crawl",
         r"business advising",
@@ -355,6 +359,23 @@ def filter_junk_rows(df: pd.DataFrame) -> pd.DataFrame:
         print(f"  Removed {removed} junk/adult-only rows")
 
     return df
+
+
+def filter_date_window(df: pd.DataFrame) -> pd.DataFrame:
+    """Keep only events between today and WINDOW_END. TBD rows are always kept."""
+    if df.empty:
+        return df
+
+    today = datetime.now().date()
+    parsed = pd.to_datetime(df["date"], format="%Y-%m-%d", errors="coerce").dt.date
+    in_window = parsed.notna() & (parsed >= today) & (parsed <= WINDOW_END)
+    keep = in_window | (df["date"] == "TBD")
+
+    dropped = len(df) - int(keep.sum())
+    if dropped > 0:
+        print(f"  Dropped {dropped} events outside {today} — {WINDOW_END}")
+
+    return df[keep]
 
 
 def deduplicate(df: pd.DataFrame) -> pd.DataFrame:
@@ -472,6 +493,7 @@ def main():
     print("=" * 60)
     print("  Palo Alto Baby Activities Calendar Scraper")
     print(f"  {datetime.now().strftime('%B %d, %Y %I:%M %p')}")
+    print(f"  Window: {datetime.now().date()} -> {WINDOW_END} ({WEEKS_AHEAD} weeks)")
     print("=" * 60)
 
     # Scrape
@@ -485,6 +507,7 @@ def main():
     df = filter_junk_rows(df)
     print(f"  After cleanup: {len(df)}")
 
+    df = filter_date_window(df)
     df = deduplicate(df)
     print(f"  After dedup: {len(df)}")
 

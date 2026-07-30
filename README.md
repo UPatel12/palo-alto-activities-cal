@@ -1,8 +1,8 @@
 # Baby Activities Calendar — Palo Alto
 
-A scraper that pulls **700+ baby-friendly events** near Palo Alto and generates a mobile-friendly calendar you can browse and import into Apple Calendar or Google Calendar.
+A scraper that pulls **1,000+ baby-friendly events** near Palo Alto and generates a mobile-friendly calendar you can browse and import into Apple Calendar or Google Calendar.
 
-Covers July through Labor Day and refreshes weekly.
+Covers today through **October 31** and refreshes weekly. The window is set by `WINDOW_END` in `scraper.py`.
 
 ---
 
@@ -76,6 +76,13 @@ Covers July through Labor Day and refreshes weekly.
 - Coyote Point Summerfest (Aug 15)
 - Redwood City Kids Rock! (morning concerts)
 
+**Fall 2026**
+- The Great Glass Pumpkin Patch, Palo Alto Art Center (Sept 26–27, free)
+- Half Moon Bay Art & Pumpkin Festival (Oct 17–18, free)
+- Webb Ranch pumpkin patch (late Sept–Oct 31 — confirm dates)
+- Halloween events in Menlo Park, Mountain View, and at the Junior Museum & Zoo are
+  listed as TBD until each city publishes its 2026 date
+
 **Baby classes** (weekly reminders)
 - My Gym Palo Alto
 - The Little Gym Mountain View
@@ -84,6 +91,31 @@ Covers July through Labor Day and refreshes weekly.
 - FIT4MOM Stroller Strides
 - Gymboree San Mateo
 - La Petite Playhouse open play (Redwood City)
+
+---
+
+## The web app
+
+**https://upatel12.github.io/palo-alto-activities-cal/**
+
+A phone-first page that regroups the calendar into how you actually plan:
+**Places** you can turn up to, **Every week** regulars, and **What's on** by date.
+Filter by free-only and drive time.
+
+To refresh it after a scrape:
+
+```bash
+python3 scraper.py     # pull fresh events
+./publish.sh           # rebuild the page and push it live
+```
+
+`publish.sh` builds the `gh-pages` branch with git plumbing, so it never checks out
+a branch or touches your working tree.
+
+The `--standalone` flag it passes matters: without it the page is emitted as a
+fragment with no `<head>`, because the Artifact host supplies one. Served from a
+plain web host, that fragment has no viewport meta tag and renders at desktop
+width on a phone.
 
 ---
 
@@ -114,9 +146,11 @@ Open `output/calendar.html` in your browser. Import `output/activities.ics` into
 
 ## Auto-refresh (weekly)
 
-A macOS launchd plist is included to auto-run the scraper every Sunday at 8 PM:
+A macOS launchd plist is included to auto-run the scraper every Sunday at 8 PM.
+Replace `/PATH/TO/palo-alto-activities-cal` in the plist with your own checkout path first:
 
 ```bash
+sed -i '' "s|/PATH/TO/palo-alto-activities-cal|$(pwd)|g" com.paloalto.activities.scraper.plist
 cp com.paloalto.activities.scraper.plist ~/Library/LaunchAgents/
 launchctl load ~/Library/LaunchAgents/com.paloalto.activities.scraper.plist
 ```

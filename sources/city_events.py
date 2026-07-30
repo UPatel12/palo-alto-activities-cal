@@ -70,12 +70,12 @@ def fetch_with_brightdata(url: str) -> str | None:
         return None
 
 
-def parse_city_events_page(html: str, source: dict) -> list[dict]:
+def parse_city_events_page(html: str, source: dict, weeks_ahead: int = 4) -> list[dict]:
     """Parse a city events page and extract baby-friendly events."""
     events = []
     soup = BeautifulSoup(html, "html.parser")
     now = datetime.now()
-    cutoff = now + timedelta(weeks=4)
+    cutoff = now + timedelta(weeks=weeks_ahead)
 
     # Generic event extraction — look for common event card patterns
     # City websites vary widely, so we try multiple selectors
@@ -191,7 +191,7 @@ def parse_fuzzy_date(text: str):
     return None
 
 
-def scrape_all() -> list[dict]:
+def scrape_all(weeks_ahead: int = 4) -> list[dict]:
     """Scrape all city event sources."""
     all_events = []
     for source in CITY_SOURCES:
@@ -199,7 +199,7 @@ def scrape_all() -> list[dict]:
         html = fetch_with_brightdata(source["url"])
         if not html:
             continue
-        events = parse_city_events_page(html, source)
+        events = parse_city_events_page(html, source, weeks_ahead=weeks_ahead)
         all_events.extend(events)
         print(f"    Found {len(events)} baby-friendly events")
     return all_events
