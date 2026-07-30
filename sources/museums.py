@@ -101,12 +101,12 @@ MUSEUM_SOURCES = [
 ]
 
 
-def parse_museum_page(html: str, source: dict) -> list[dict]:
+def parse_museum_page(html: str, source: dict, weeks_ahead: int = 4) -> list[dict]:
     """Parse a museum events page for family events."""
     events = []
     soup = BeautifulSoup(html, "html.parser")
     now = datetime.now()
-    cutoff = now + timedelta(weeks=4)
+    cutoff = now + timedelta(weeks=weeks_ahead)
 
     # Look for event cards/listings
     event_cards = soup.select(
@@ -189,7 +189,7 @@ def _with_source(desc: str, source_name: str) -> str:
     return f"{desc} | {tag}" if desc else tag
 
 
-def scrape_all() -> list[dict]:
+def scrape_all(weeks_ahead: int = 4) -> list[dict]:
     """Scrape all museum/attraction event pages."""
     all_events = []
     for source in MUSEUM_SOURCES:
@@ -197,7 +197,7 @@ def scrape_all() -> list[dict]:
         html = fetch_with_brightdata(source["url"])
         if not html:
             continue
-        events = parse_museum_page(html, source)
+        events = parse_museum_page(html, source, weeks_ahead=weeks_ahead)
         all_events.extend(events)
         print(f"    Found {len(events)} events")
     return all_events

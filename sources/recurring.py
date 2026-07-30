@@ -1,7 +1,8 @@
 """Recurring and seasonal events that don't need scraping.
 
 These are hand-curated events with known schedules. The script generates
-concrete dated entries for the upcoming 4-week window.
+concrete dated entries across the window requested by the caller
+(weeks_ahead), which scraper.py derives from WINDOW_END.
 """
 
 from datetime import date, datetime, timedelta
@@ -99,6 +100,21 @@ SEASONAL_ACTIVITIES = [
         "cost": "$29-$34 kids / $17 adults / free under 14 months",
         "description": "Train ride, petting zoo, hay rides. Free for babies under 14 months! Stroller-friendly.",
         "url": "https://www.lemosfarm.com",
+        "age_range": "All ages",
+    },
+    {
+        "event_name": "Pumpkin Patch at Webb Ranch",
+        "location": "Webb Ranch",
+        "city": "Portola Valley",
+        "drive_time": "15 min",
+        "months": [9, 10],
+        "day_of_week": [0, 1, 2, 3, 4, 5, 6],  # Open daily once the patch opens
+        "start_date": "2026-09-26",  # Opens the last full weekend of September
+        "end_date": "2026-10-31",
+        "time": "10:00 AM - 6:00 PM",
+        "cost": "No entry fee / activities ticketed",
+        "description": "Pumpkin patch with corn maze, hay rides, and farm animals. Activities close at 5pm; weekend activity passes need a reservation. CONFIRM 2026 dates — 650-854-6334. Stroller-tricky on dirt; carrier is easier.",
+        "url": "https://www.webbranchinc.com/pumpkin-patch.html",
         "age_range": "All ages",
     },
 ]
@@ -715,6 +731,65 @@ ONE_TIME_SUMMER_EVENTS = [
         "description": "Saturday morning family storytime. Songs, rhymes, and stories. Continues through August. | Source: Palo Alto City Library",
         "category": "Library & Storytimes",
     } for d in ["2026-07-18","2026-07-25","2026-08-01","2026-08-08","2026-08-15","2026-08-22","2026-08-29","2026-09-05"]],
+
+    # ── Fall 2026 — dates confirmed against official sources ──
+    *[{
+        "event_name": "The Great Glass Pumpkin Patch",
+        "date": d, "day": date.fromisoformat(d).strftime("%A"), "time": "10:00 AM - 5:00 PM",
+        "location": "Palo Alto Art Center", "city": "Palo Alto", "drive_time": "5 min",
+        "cost": "Free", "age_range": "All ages",
+        "url": "https://www.paloalto.gov/Departments/Community-Services/Arts-Sciences/Palo-Alto-Art-Center/Special-Events/Pumpkins",
+        "description": "Thousands of hand-blown glass pumpkins on the Art Center lawn with live glassblowing demos. Free admission. Outdoors and stroller-friendly — glass is on low tables, so keep baby carried or strapped in. | Source: City of Palo Alto",
+        "category": "Special Events",
+    } for d in ["2026-09-26", "2026-09-27"]],
+    *[{
+        "event_name": "Half Moon Bay Art & Pumpkin Festival",
+        "date": d, "day": date.fromisoformat(d).strftime("%A"), "time": "9:00 AM - 5:00 PM",
+        "location": "Main Street (Miramontes to Spruce)", "city": "Half Moon Bay", "drive_time": "35 min",
+        "cost": "Free", "age_range": "All ages",
+        "url": "https://hmbpumpkinfest.com/",
+        "description": "Free street festival with a Family Fun Zone at 620 Main Street — non-competitive pumpkin carving, pie-eating contests, and a diaper changing/family rest station. Giant champion pumpkins on display. Very crowded; carrier beats stroller. Coastal fog — bring layers. | Source: HMB Art & Pumpkin Festival",
+        "category": "Special Events",
+    } for d in ["2026-10-17", "2026-10-18"]],
+]
+
+# Annual fall events whose 2026 dates aren't published yet.
+# Listed as TBD so they show up as a reminder instead of asserting a wrong date.
+FALL_EVENTS_TBD = [
+    {
+        "event_name": "Halloween Hoopla Parade & Trick-or-Treat",
+        "location": "Fremont Park & Downtown Menlo Park", "city": "Menlo Park", "drive_time": "10 min",
+        "cost": "Free", "age_range": "All ages",
+        "url": "https://www.menlopark.gov/Citywide-calendar",
+        "description": "Costume parade to Fremont Park, then trick-or-treating at downtown shops, plus carnival games, crafts, and a magic show. Usually the Saturday before Halloween — confirm the 2026 date on the city calendar.",
+        "category": "Community Events",
+    },
+    {
+        "event_name": "Halloween on Castro Street",
+        "location": "Downtown Castro Street", "city": "Mountain View", "drive_time": "10 min",
+        "cost": "Free", "age_range": "All ages",
+        "url": "https://www.mountainview.gov/our-city/departments/community-services/special-events",
+        "description": "Decorated storefronts and trick-or-treating along downtown Castro Street, with discounts for anyone in costume. Flat, walkable, stroller-friendly. Confirm the 2026 date with the city.",
+        "category": "Community Events",
+    },
+    {
+        "event_name": "Halloween at the Junior Museum & Zoo",
+        "location": "Palo Alto Junior Museum & Zoo", "city": "Palo Alto", "drive_time": "5 min",
+        "cost": "See website / free under 12 months", "age_range": "0-9 years",
+        # Distinct from the zoo homepage on purpose — deduplicate() drops a TBD row
+        # whose URL already appears on a dated row.
+        "url": "https://www.paloaltozoo.org/Programs/Family-Programs",
+        "description": "Annual Halloween party — trick-or-treating through the zoo plus animal encounters. Tickets sell out early; confirm the 2026 date and on-sale time.",
+        "category": "Special Events",
+    },
+    {
+        "event_name": "Apple U-Pick at Gizdich Ranch",
+        "location": "Gizdich Ranch", "city": "Watsonville", "drive_time": "1 hr",
+        "cost": "Pay per pound", "age_range": "All ages",
+        "url": "https://www.gizdich-ranch.com/u-pick",
+        "description": "Apple picking opens in late September and runs into fall. Card only — no cash at U-pick. Call 831-722-1056 for exact opening dates and current varieties. Flat orchard rows; stroller works on dry ground.",
+        "category": "Outdoor & Nature",
+    },
 ]
 
 # Indoor play spaces (weekday and weekend entries)
@@ -882,9 +957,17 @@ def generate_recurring_events(weeks_ahead: int = 4) -> list[dict]:
 
     # Seasonal activities
     for activity in SEASONAL_ACTIVITIES:
+        # Optional hard bounds for seasons that don't align to whole months
+        season_start = activity.get("start_date")
+        season_end = activity.get("end_date")
+        season_start = date.fromisoformat(season_start) if season_start else None
+        season_end = date.fromisoformat(season_end) if season_end else None
+
         current = today
         while current <= cutoff:
-            if (current.month in activity["months"]
+            if ((season_start is None or current >= season_start)
+                    and (season_end is None or current <= season_end)
+                    and current.month in activity["months"]
                     and current.weekday() in activity["day_of_week"]):
                 events.append({
                     "date": current.isoformat(),
@@ -990,6 +1073,23 @@ def generate_recurring_events(weeks_ahead: int = 4) -> list[dict]:
                 "url": event.get("url", ""),
                 "description": event.get("description", ""),
             })
+
+    # Annual fall events with no published 2026 date yet
+    for event in FALL_EVENTS_TBD:
+        events.append({
+            "date": "TBD",
+            "day": "",
+            "time": event.get("time", "See website"),
+            "event_name": event["event_name"],
+            "category": event.get("category", "Community Events"),
+            "location": event["location"],
+            "city": event["city"],
+            "drive_time": event["drive_time"],
+            "cost": event.get("cost", "See website"),
+            "age_range": event.get("age_range", "All ages"),
+            "url": event.get("url", ""),
+            "description": event.get("description", ""),
+        })
 
     return events
 

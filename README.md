@@ -1,8 +1,8 @@
 # Baby Activities Calendar — Palo Alto
 
-A scraper that pulls **700+ baby-friendly events** near Palo Alto and generates a mobile-friendly calendar you can browse and import into Apple Calendar or Google Calendar.
+A scraper that pulls **1,000+ baby-friendly events** near Palo Alto and generates a mobile-friendly calendar you can browse and import into Apple Calendar or Google Calendar.
 
-Covers July through Labor Day and refreshes weekly.
+Covers today through **October 31** and refreshes weekly. The window is set by `WINDOW_END` in `scraper.py`.
 
 ---
 
@@ -75,6 +75,13 @@ Covers July through Labor Day and refreshes weekly.
 - PV Palooza (Aug 29)
 - Coyote Point Summerfest (Aug 15)
 - Redwood City Kids Rock! (morning concerts)
+
+**Fall 2026**
+- The Great Glass Pumpkin Patch, Palo Alto Art Center (Sept 26–27, free)
+- Half Moon Bay Art & Pumpkin Festival (Oct 17–18, free)
+- Webb Ranch pumpkin patch (late Sept–Oct 31 — confirm dates)
+- Halloween events in Menlo Park, Mountain View, and at the Junior Museum & Zoo are
+  listed as TBD until each city publishes its 2026 date
 
 **Baby classes** (weekly reminders)
 - My Gym Palo Alto

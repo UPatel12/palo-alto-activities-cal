@@ -60,12 +60,12 @@ FARM_SOURCES = [
 ]
 
 
-def parse_farm_page(html: str, source: dict) -> list[dict]:
+def parse_farm_page(html: str, source: dict, weeks_ahead: int = 4) -> list[dict]:
     """Parse a farm/outdoor page for events and activities."""
     events = []
     soup = BeautifulSoup(html, "html.parser")
     now = datetime.now()
-    cutoff = now + timedelta(weeks=4)
+    cutoff = now + timedelta(weeks=weeks_ahead)
 
     # Look for event listings, hours, or seasonal info
     event_cards = soup.select(
@@ -130,7 +130,7 @@ def _with_source(desc: str, source_name: str) -> str:
     return f"{desc} | {tag}" if desc else tag
 
 
-def scrape_all() -> list[dict]:
+def scrape_all(weeks_ahead: int = 4) -> list[dict]:
     """Scrape all farm/outdoor sources."""
     all_events = []
     for source in FARM_SOURCES:
@@ -138,7 +138,7 @@ def scrape_all() -> list[dict]:
         html = fetch_with_brightdata(source["url"])
         if not html:
             continue
-        events = parse_farm_page(html, source)
+        events = parse_farm_page(html, source, weeks_ahead=weeks_ahead)
         all_events.extend(events)
         print(f"    Found {len(events)} events")
     return all_events
