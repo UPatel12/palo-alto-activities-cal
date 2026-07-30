@@ -169,15 +169,50 @@ def build_payload(df: pd.DataFrame) -> dict:
     }
 
 
-def generate(df: pd.DataFrame, out_path: Path) -> dict:
+TITLE = "Baby Days · Peninsula"
+BLURB = ("Baby-friendly places, weekly storytimes, and free events within an hour "
+         "of Palo Alto.")
+
+# Served straight from a web host, the page needs its own document wrapper.
+# The Artifact host supplies one, so that variant omits it -- but a bare
+# fragment has no viewport meta, which renders this phone-first layout at
+# desktop width on a phone.
+STANDALONE = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{title}</title>
+<meta name="description" content="{blurb}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{blurb}">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#FBF8F6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#171216" media="(prefers-color-scheme: dark)">
+</head>
+<body>
+{content}
+</body>
+</html>
+"""
+
+
+def generate(df: pd.DataFrame, out_path: Path, standalone: bool = False) -> dict:
     payload = build_payload(df)
-    html = PAGE.replace("__DATA__", json.dumps(payload, ensure_ascii=False, separators=(",", ":")))
+    data = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+    content = PAGE.replace("__DATA__", data)
+
+    if standalone:
+        html = STANDALONE.format(title=TITLE, blurb=BLURB, content=content)
+    else:
+        html = f"<title>{TITLE}</title>\n{content}"
+
     out_path.write_text(html, encoding="utf-8")
     return payload
 
 
-PAGE = r"""<title>Baby Days · Peninsula</title>
-<style>
+PAGE = r"""<style>
 :root{
   --ground:#FBF8F6; --surface:#FFFFFF; --raise:#F5EEF1;
   --ink:#2A2026; --body:#4B3F46; --muted:#7A6C74; --line:#E9DFE4;
@@ -648,6 +683,9 @@ def main():
     parser = argparse.ArgumentParser(description="Build the shareable app page")
     parser.add_argument("--csv", default=str(DEFAULT_CSV))
     parser.add_argument("--out", default=str(DEFAULT_OUT))
+    parser.add_argument("--standalone", action="store_true",
+                        help="Emit a full HTML document (for web hosting) instead of "
+                             "a fragment (for the Artifact host, which supplies <head>)")
     args = parser.parse_args()
 
     csv_path = Path(args.csv)
@@ -657,9 +695,10 @@ def main():
 
     df = pd.read_csv(csv_path).fillna("")
     out = Path(args.out)
-    p = generate(df, out)
+    p = generate(df, out, standalone=args.standalone)
 
-    print(f"  App saved to {out}  ({out.stat().st_size/1024:.0f} KB)")
+    kind = "standalone page" if args.standalone else "artifact fragment"
+    print(f"  {kind} saved to {out}  ({out.stat().st_size/1024:.0f} KB)")
     print(f"  {len(p['places'])} places · {len(p['regulars'])} weekly · "
           f"{len(p['events'])} events · {len(p['tbd'])} TBD")
 

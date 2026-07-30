@@ -94,6 +94,27 @@ Covers today through **October 31** and refreshes weekly. The window is set by `
 
 ---
 
+## The web app
+
+**https://upatel12.github.io/palo-alto-activities-cal/**
+
+A phone-first page that regroups the calendar into how you actually plan:
+**Places** you can turn up to, **Every week** regulars, and **What's on** by date.
+Filter by free-only and drive time.
+
+```bash
+# Rebuild after a scrape, then publish
+python generate_app.py --standalone --out output/index.html
+git add -f output/index.html && git commit -m "Update app"
+git subtree push --prefix output origin gh-pages   # or push index.html to gh-pages
+```
+
+The `--standalone` flag matters: without it the page is emitted as a fragment with
+no `<head>`, so a browser gets no viewport meta tag and renders it at desktop width
+on phones.
+
+---
+
 ## Setup
 
 ```bash
