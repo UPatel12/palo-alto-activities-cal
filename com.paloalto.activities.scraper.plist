@@ -7,7 +7,7 @@
     <key>ProgramArguments</key>
     <array>
         <string>/usr/bin/python3</string>
-        <string>/Users/unni/Palo Alto Activities Cal/scraper.py</string>
+        <string>/PATH/TO/palo-alto-activities-cal/scraper.py</string>
     </array>
     <key>StartCalendarInterval</key>
     <dict>
@@ -19,11 +19,11 @@
         <integer>0</integer>
     </dict>
     <key>StandardOutPath</key>
-    <string>/Users/unni/Palo Alto Activities Cal/output/scraper.log</string>
+    <string>/PATH/TO/palo-alto-activities-cal/output/scraper.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/unni/Palo Alto Activities Cal/output/scraper.log</string>
+    <string>/PATH/TO/palo-alto-activities-cal/output/scraper.log</string>
     <key>WorkingDirectory</key>
-    <string>/Users/unni/Palo Alto Activities Cal</string>
+    <string>/PATH/TO/palo-alto-activities-cal</string>
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>

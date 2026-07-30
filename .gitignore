@@ -11,4 +11,6 @@ __pycache__/
 output/activities.csv
 output/activities.ics
 output/calendar.html
+output/app.html
 output/scraper.log
+.gstack/

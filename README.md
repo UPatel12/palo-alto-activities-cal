@@ -121,9 +121,11 @@ Open `output/calendar.html` in your browser. Import `output/activities.ics` into
 
 ## Auto-refresh (weekly)
 
-A macOS launchd plist is included to auto-run the scraper every Sunday at 8 PM:
+A macOS launchd plist is included to auto-run the scraper every Sunday at 8 PM.
+Replace `/PATH/TO/palo-alto-activities-cal` in the plist with your own checkout path first:
 
 ```bash
+sed -i '' "s|/PATH/TO/palo-alto-activities-cal|$(pwd)|g" com.paloalto.activities.scraper.plist
 cp com.paloalto.activities.scraper.plist ~/Library/LaunchAgents/
 launchctl load ~/Library/LaunchAgents/com.paloalto.activities.scraper.plist
 ```
