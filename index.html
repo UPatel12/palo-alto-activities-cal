@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Baby Days</title>
+<meta name="description" content="Baby-friendly places, weekly storytimes, and free events within an hour of Palo Alto.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Baby Days">
+<meta property="og:description" content="Baby-friendly places, weekly storytimes, and free events within an hour of Palo Alto.">
+<meta name="twitter:card" content="summary">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+</head>
+<body>
+<style>
+/* iOS system palette. Semantic greens/oranges are darkened for text use on
+   light grounds, where Apple's display values fail contrast. */
+:root{
+  --bg:#F2F2F7; --surface:#FFFFFF; --press:#D1D1D6; --fill:rgba(118,118,128,.12);
+  --label:#1C1C1E; --label2:#8E8E93; --label3:#C7C7CC;
+  --sep:rgba(60,60,67,.20);
+  --accent:#007AFF;
+  --ok:#248A3D;   --ok-bg:rgba(52,199,89,.15);
+  --pay:#B25000;  --pay-bg:rgba(255,149,0,.16);
+  --neutral:#6C6C70; --neutral-bg:rgba(118,118,128,.12);
+  --nav:rgba(242,242,247,.82);
+  --seg-on:#FFFFFF;
+  --shadow:0 3px 8px rgba(0,0,0,.10),0 1px 1px rgba(0,0,0,.04);
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#000000; --surface:#1C1C1E; --press:#2C2C2E; --fill:rgba(118,118,128,.24);
+    --label:#FFFFFF; --label2:#98989F; --label3:#48484A;
+    --sep:rgba(84,84,88,.65);
+    --accent:#0A84FF;
+    --ok:#30D158;  --ok-bg:rgba(48,209,88,.18);
+    --pay:#FF9F0A; --pay-bg:rgba(255,159,10,.18);
+    --neutral:#98989F; --neutral-bg:rgba(118,118,128,.24);
+    --nav:rgba(0,0,0,.72);
+    --seg-on:#636366;
+    --shadow:0 3px 8px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#000000; --surface:#1C1C1E; --press:#2C2C2E; --fill:rgba(118,118,128,.24);
+  --label:#FFFFFF; --label2:#98989F; --label3:#48484A;
+  --sep:rgba(84,84,88,.65);
+  --accent:#0A84FF;
+  --ok:#30D158;  --ok-bg:rgba(48,209,88,.18);
+  --pay:#FF9F0A; --pay-bg:rgba(255,159,10,.18);
+  --neutral:#98989F; --neutral-bg:rgba(118,118,128,.24);
+  --nav:rgba(0,0,0,.72);
+  --seg-on:#636366;
+  --shadow:0 3px 8px rgba(0,0,0,.5);
+}
+:root[data-theme="light"]{
+  --bg:#F2F2F7; --surface:#FFFFFF; --press:#D1D1D6; --fill:rgba(118,118,128,.12);
+  --label:#1C1C1E; --label2:#8E8E93; --label3:#C7C7CC;
+  --sep:rgba(60,60,67,.20);
+  --accent:#007AFF;
+  --ok:#248A3D;  --ok-bg:rgba(52,199,89,.15);
+  --pay:#B25000; --pay-bg:rgba(255,149,0,.16);
+  --neutral:#6C6C70; --neutral-bg:rgba(118,118,128,.12);
+  --nav:rgba(242,242,247,.82);
+  --seg-on:#FFFFFF;
+  --shadow:0 3px 8px rgba(0,0,0,.10),0 1px 1px rgba(0,0,0,.04);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--label);
+  font-family:var(--sans);font-size:17px;line-height:1.47;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+.app{max-width:600px;margin:0 auto;padding:0 16px calc(56px + env(safe-area-inset-bottom))}
+
+/* ── Large title ─────────────────────── */
+.hero{padding:24px 0 10px}
+.hero h1{
+  margin:0;font-size:34px;line-height:1.12;font-weight:700;letter-spacing:-.022em;
+  color:var(--label);
+}
+.hero p{margin:6px 0 0;font-size:15px;line-height:1.4;color:var(--label2);max-width:34em}
+
+/* ── Sticky bar: segmented control + filters ── */
+.bar{
+  position:sticky;top:0;z-index:30;padding:10px 0 12px;
+  background:var(--nav);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  backdrop-filter:saturate(180%) blur(20px);
+}
+.seg{display:flex;gap:2px;background:var(--fill);border-radius:9px;padding:2px}
+.seg button{
+  flex:1;min-width:0;border:0;border-radius:7px;padding:7px 2px;cursor:pointer;
+  background:transparent;color:var(--label);font-family:inherit;
+  font-size:13px;font-weight:500;letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:background .18s ease;
+}
+.seg button[aria-selected="true"]{background:var(--seg-on);font-weight:600;box-shadow:var(--shadow)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+
+.filters{display:flex;align-items:center;gap:8px;margin-top:10px}
+.pill{
+  border:0;border-radius:100px;padding:6px 13px;cursor:pointer;
+  background:var(--fill);color:var(--accent);font-family:inherit;
+  font-size:13px;font-weight:500;letter-spacing:-.01em;
+}
+.pill[aria-pressed="true"]{background:var(--accent);color:#fff}
+.pill:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+select.pill{
+  appearance:none;padding-right:26px;
+  background-image:
+    linear-gradient(45deg,transparent 50%,currentColor 50%),
+    linear-gradient(135deg,currentColor 50%,transparent 50%);
+  background-position:calc(100% - 15px) 52%,calc(100% - 10px) 52%;
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+}
+.tally{margin-left:auto;font-size:13px;color:var(--label2);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* ── Day nav ─────────────────────────── */
+.daynav{display:flex;align-items:center;gap:10px;padding:18px 0 2px}
+.daynav h2{flex:1;margin:0;font-size:22px;font-weight:700;letter-spacing:-.021em}
+.daynav h2 small{display:block;font-size:13px;font-weight:400;color:var(--label2);
+  letter-spacing:0;margin-top:1px}
+.step{
+  width:32px;height:32px;flex:0 0 auto;border:0;border-radius:100px;cursor:pointer;
+  background:var(--fill);color:var(--accent);font-size:16px;line-height:1;
+  display:flex;align-items:center;justify-content:center;font-family:inherit;
+}
+.step:disabled{color:var(--label3);cursor:default}
+.step:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ── Grouped list ────────────────────── */
+.hdr{
+  font-size:13px;font-weight:400;color:var(--label2);
+  text-transform:uppercase;letter-spacing:.05em;
+  padding:22px 16px 7px;
+}
+.hdr .rt{float:right;text-transform:none;letter-spacing:0;font-variant-numeric:tabular-nums}
+.group{background:var(--surface);border-radius:10px;overflow:hidden}
+.group + .hdr{padding-top:26px}
+
+.row{position:relative}
+.row:not(:last-child)::after{
+  content:"";position:absolute;left:16px;right:0;bottom:0;
+  height:1px;background:var(--sep);transform:scaleY(.5);transform-origin:bottom;
+}
+/* The tappable summary is its own button; the detail sits outside it, because a
+   button may only contain phrasing content and must never wrap a link. */
+.summary{
+  display:block;width:100%;text-align:left;padding:11px 16px;
+  background:transparent;border:0;cursor:pointer;
+  font-family:inherit;color:inherit;
+  -webkit-tap-highlight-color:transparent;
+}
+.summary:active{background:var(--press)}
+.summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+.rtop{display:flex;align-items:flex-start;gap:10px}
+.rtitle{
+  flex:1;min-width:0;font-size:17px;font-weight:400;line-height:1.32;
+  letter-spacing:-.021em;color:var(--label);
+}
+.chev{
+  flex:0 0 auto;margin-top:4px;color:var(--label3);
+  transition:transform .22s cubic-bezier(.4,0,.2,1);
+}
+.row.open .chev{transform:rotate(90deg)}
+
+.badge{
+  flex:0 0 auto;margin-top:1px;font-size:11px;font-weight:600;letter-spacing:.005em;
+  padding:2px 7px;border-radius:100px;white-space:nowrap;
+}
+.b-ok{background:var(--ok-bg);color:var(--ok)}
+.b-pay{background:var(--pay-bg);color:var(--pay)}
+.b-neutral{background:var(--neutral-bg);color:var(--neutral)}
+
+.sub{
+  margin-top:2px;font-size:14px;line-height:1.35;color:var(--label2);
+  letter-spacing:-.008em;font-variant-numeric:tabular-nums;
+}
+.sub span:not(:last-child)::after{content:" · ";color:var(--label3)}
+
+/* Day-of-week strip */
+.days{display:flex;gap:4px;margin-top:8px}
+.day{
+  flex:0 0 auto;min-width:30px;text-align:center;padding:3px 0;border-radius:6px;
+  font-size:11px;font-weight:500;background:var(--fill);color:var(--label3);
+  font-variant-numeric:tabular-nums;
+}
+.day.on{background:var(--accent);color:#fff}
+
+/* Expanded detail */
+.detail{display:none;padding:11px 16px 14px;border-top:1px solid var(--sep)}
+.row.open .detail{display:block}
+.detail p{margin:0 0 10px;font-size:15px;line-height:1.45;color:var(--label);
+  letter-spacing:-.012em}
+.detail dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14px}
+.detail dt{color:var(--label2)}
+.detail dd{margin:0;color:var(--label)}
+.detail a{
+  display:inline-block;margin-top:12px;color:var(--accent);
+  font-size:15px;font-weight:500;text-decoration:none;
+}
+.detail a:hover{text-decoration:underline}
+.detail a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+
+/* ── Empty + footer ──────────────────── */
+.blank{
+  background:var(--surface);border-radius:10px;padding:34px 22px;text-align:center;
+}
+.blank b{display:block;font-size:17px;font-weight:600;margin-bottom:3px;letter-spacing:-.021em}
+.blank span{font-size:15px;color:var(--label2)}
+
+.legal{
+  margin-top:34px;padding:0 4px;font-size:13px;line-height:1.45;color:var(--label2);
+}
+.legal p{margin:0 0 8px}
+
+@media (max-width:400px){
+  .app{padding:0 12px 48px}
+  .hero h1{font-size:30px}
+  .seg button{font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important;animation:none !important}
+}
+</style>
+
+<div class="app">
+  <header class="hero">
+    <h1>Baby Days</h1>
+    <p>Places, storytimes, and free events for babies and little kids, within an hour of Palo Alto.</p>
+  </header>
+
+  <div class="bar">
+    <div class="seg" role="tablist">
+      <button role="tab" id="t-today"  aria-selected="true"  onclick="go('today')">Today</button>
+      <button role="tab" id="t-events" aria-selected="false" onclick="go('events')">What's on</button>
+      <button role="tab" id="t-places" aria-selected="false" onclick="go('places')">Places</button>
+      <button role="tab" id="t-weekly" aria-selected="false" onclick="go('weekly')">Weekly</button>
+    </div>
+    <div class="filters">
+      <button class="pill" id="f-free" aria-pressed="false" onclick="toggleFree()">Free only</button>
+      <select class="pill" id="f-dist" onchange="setDist(this.value)" aria-label="Maximum drive time">
+        <option value="999">Any drive</option>
+        <option value="10">10 min</option>
+        <option value="15">15 min</option>
+        <option value="20">20 min</option>
+        <option value="30">30 min</option>
+        <option value="45">45 min</option>
+      </select>
+      <span class="tally" id="tally"></span>
+    </div>
+  </div>
+
+  <main id="view"></main>
+
+  <footer class="legal">
+    <p>Costs and hours change. Check the venue's own page before you load the car.</p>
+    <p id="built"></p>
+  </footer>
+</div>
+
+<script>
+const D = {"places":[{"name":"Picnic at Mitchell Park","loc":"Mitchell Park","city":"Palo Alto","time":"Anytime","cost":"Free","label":"Free","ages":"All ages","cat":"Outdoor & Nature","drive":"5 min","mins":5,"url":"","desc":"Playground, large grass areas, picnic tables. Baby swings available. Adjacent to library.","src":"Curated (hand-picked)","slot":"anytime","dows":[5,6],"from":"2026-08-01","to":"2026-10-31"},{"name":"Palo Alto Junior Museum & Zoo","loc":"Palo Alto Junior Museum & Zoo","city":"Palo Alto","time":"10:00 AM - 5:00 PM","cost":"$14 (weekday AM/weekends) / $10 (weekday PM) / free under 12 months","label":"Free for baby","ages":"All ages","cat":"Outdoor & Nature","drive":"5 min","mins":5,"url":"https://www.paloaltozoo.org","desc":"Hands-on science exhibits, live animals, outdoor play. Great for babies! Tue-Sun 10am-5pm.","src":"Curated (hand-picked)","slot":"morning","dows":[5,6],"from":"2026-08-01","to":"2026-10-31"},{"name":"Picnic at Rinconada Park","loc":"Rinconada Park","city":"Palo Alto","time":"Anytime","cost":"Free","label":"Free","ages":"All ages","cat":"Outdoor & Nature","drive":"5 min","mins":5,"url":"","desc":"Shaded picnic area, playground, pool nearby. Quiet neighborhood park.","src":"Curated (hand-picked)","slot":"anytime","dows":[5,6],"from":"2026-08-01","to":"2026-10-31"},{"name":"Explore Stanford Dish Trail","loc":"The Dish","city":"Stanford","time":"Anytime","cost":"Free","label":"Free","ages":"All ages","cat":"Outdoor & Nature","drive":"5 min","mins":5,"url":"","desc":"3.7 mile loop with beautiful views. Stroller-friendly paved trail. Go early for cooler temps.","src":"Curated (hand-picked)","slot":"anytime","dows":[5,6],"from":"2026-08-01","to":"2026-10-31"},{"name":"Magical Bridge Playground","loc":"Magical Bridge Playground (Mitchell Park)","city":"Palo Alto","time":"Anytime","cost":"Free","label":"Free","ages":"All ages","cat":"Outdoor & Nature","drive":"5 min","mins":5,"url":"https://www.magicalbridge.org","desc":"All-inclusive playground with baby swings, sensory areas, music features. Beautifully designed for all abilities.","src":"Curated (hand-picked)","slot":"anytime","dows":[5,6],"from":"2026-08-01","to":"2026-10-31"},{"name":"LIBI Play Space at OFJCC (Free Drop-In)","loc":"Oshman Family JCC","city":"Palo Alto","time":"9:30 AM - 12:00 PM","cost":"Free (no membership required)","label":"Free","ages":"0-3 years","cat":"Special Events","drive":"5 min","mins":5,"url":"https://paloaltojcc.org/libi-play-space-weekly","desc":"Drop-in morning play for parents with babies and toddlers. No RSVP, walk-ins welcome. Jeff Center for Families.","src":"OFJCC | Source: Curated (hand-picked)","slot":"morning","dows":[2],"from":"2026-08-12","to":"2026-09-02"},{"name":"Visit Deer Hollow Farm","loc":"Deer Hollow Farm","city":"Cupertino","time":"8:00 AM - 4:00 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Outdoor & Nature","drive":"10 min","mins":10,"url":"https://www.deerhollowfarm.org","desc":"Free working farm with goats, chickens, pigs, cows. Tue/Thu-Sun 8am-4pm. Wednesday 8am-1pm only. Closed Monday. Arrive after 9am to see animals out.","src":"Curated (hand-picked)","slot":"morning","dows":[1,2,3,4,5,6],"from":"2026-07-30","to":"2026-10-31"},{"name":"Walk at Baylands Nature Preserve","loc":"Baylands Nature Preserve","city":"Palo Alto","time":"Anytime","cost":"Free","label":"Free","ages":"All ages","cat":"Outdoor & Nature","drive":"10 min","mins":10,"url":"","desc":"Flat stroller-friendly trails along the bay. Great for bird watching with baby.","src":"Curated (hand-picked)","slot":"anytime","dows":[5,6],"from":"2026-08-01","to":"2026-10-31"},{"name":"Visit Shoreline Park & Lake","loc":"Shoreline Park","city":"Mountain View","time":"Anytime","cost":"Free","label":"Free","ages":"All ages","cat":"Outdoor & Nature","drive":"10 min","mins":10,"url":"","desc":"Lake, walking paths, playground, picnic areas. Watch the Google geese!","src":"Curated (hand-picked)","slot":"anytime","dows":[5,6],"from":"2026-08-01","to":"2026-10-31"},{"name":"Open Play at La Petite Playhouse","loc":"La Petite Playhouse","city":"Redwood City","time":"9:00 AM - 5:00 PM","cost":"$8 non-walkers (babies) / $18 walkers / adults free","label":"Paid","ages":"0-5 years","cat":"Classes & Groups","drive":"15 min","mins":15,"url":"https://lapetiteplay.com","desc":"10,000 sq ft indoor playground with separate baby/toddler area. Great for rainy days! Non-walkers (babies) only $8. Up to 2 adults FREE per child. Walk-ins welcome.","src":"Curated (hand-picked)","slot":"morning","dows":[0,1,2,3,4,5,6],"from":"2026-07-30","to":"2026-10-31"},{"name":"Hidden Villa Farm Visit","loc":"Hidden Villa","city":"Los Altos Hills","time":"9:00 AM - 5:00 PM","cost":"$10 parking","label":"Paid","ages":"All ages","cat":"Outdoor & Nature","drive":"15 min","mins":15,"url":"https://www.hiddenvilla.org/visit/","desc":"1,600-acre organic farm, animals, and trails. REOPENS August 4. Tue-Sun 9am-5pm. Mostly flat near farm buildings; stroller-accessible on paved paths.","src":"Curated (hand-picked)","slot":"morning","dows":[1,2,3,4,5,6],"from":"2026-08-01","to":"2026-10-31"},{"name":"U-Pick at Webb Ranch","loc":"Webb Ranch","city":"Portola Valley","time":"8:00 AM - 10:00 AM","cost":"$4 adults / free under 2 / + $7/lb berries","label":"Free for baby","ages":"All ages","cat":"Outdoor & Nature","drive":"15 min","mins":15,"url":"https://www.webbranchinc.com/u-pick-berries.html","desc":"Organic blackberries/olallieberries U-pick. Baby under 2 free! SATURDAYS ONLY 8-10am - arrive early, sell out fast. Use baby carrier (uneven terrain). Call 650-854-5417 to confirm crop. Cash/card accepted.","src":"Curated (hand-picked)","slot":"morning","dows":[5],"from":"2026-08-01","to":"2026-09-26"},{"name":"Pumpkin Patch at Webb Ranch","loc":"Webb Ranch","city":"Portola Valley","time":"10:00 AM - 6:00 PM","cost":"No entry fee / activities ticketed","label":"Free entry / Pay per pick","ages":"All ages","cat":"Outdoor & Nature","drive":"15 min","mins":15,"url":"https://www.webbranchinc.com/pumpkin-patch.html","desc":"Pumpkin patch with corn maze, hay rides, and farm animals. Activities close at 5pm; weekend activity passes need a reservation. CONFIRM 2026 dates - 650-854-6334. Stroller-tricky on dirt; carrier is easier.","src":"Curated (hand-picked)","slot":"morning","dows":[0,1,2,3,4,5,6],"from":"2026-09-26","to":"2026-10-31"},{"name":"Visit CuriOdyssey","loc":"CuriOdyssey","city":"San Mateo","time":"10:00 AM - 5:00 PM","cost":"$15 adults / free under 18mo","label":"Free for baby","ages":"All ages","cat":"Outdoor & Nature","drive":"20 min","mins":20,"url":"https://curiodyssey.org","desc":"Science playground + small zoo with ~100 live animals at Coyote Point. Free for under 18 months.","src":"Curated (hand-picked)","slot":"morning","dows":[5,6],"from":"2026-08-01","to":"2026-10-31"},{"name":"Emma Prusch Farm Park","loc":"Emma Prusch Farm Park","city":"San Jose","time":"8:30 AM - 8:30 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Outdoor & Nature","drive":"25 min","mins":25,"url":"https://pruschfarmpark.org/","desc":"Free historic farm park with 4-H livestock, rare fruit orchard, community gardens, and huge grass fields. Stroller-friendly and uncrowded. Great hidden gem!","src":"Curated (hand-picked)","slot":"morning","dows":[5,6],"from":"2026-08-01","to":"2026-10-31"},{"name":"Ardenwood Historic Farm","loc":"Ardenwood Historic Farm","city":"Fremont","time":"10:00 AM - 4:00 PM","cost":"$2-4 children / $4-6 adults / free under 4","label":"Free for baby","ages":"All ages","cat":"Outdoor & Nature","drive":"30 min","mins":30,"url":"https://www.ebparks.org/parks/ardenwood","desc":"Historic working farm with drop-in programs (Toddler Time, butter making, animal meet-and-greets). Baby under 4 is free! Tue-Sun 10am-4pm. Cashless payment only.","src":"Curated (hand-picked)","slot":"morning","dows":[5,6],"from":"2026-08-01","to":"2026-10-31"},{"name":"Explore Half Moon Bay State Beach","loc":"Half Moon Bay State Beach","city":"Half Moon Bay","time":"Anytime","cost":"$10 parking","label":"Paid","ages":"All ages","cat":"Outdoor & Nature","drive":"35 min","mins":35,"url":"","desc":"Beautiful coastal trails and beach. Great for a morning stroller walk.","src":"Curated (hand-picked)","slot":"anytime","dows":[5,6],"from":"2026-08-01","to":"2026-10-31"},{"name":"Lemos Farm Visit","loc":"Lemos Farm","city":"Half Moon Bay","time":"10:00 AM - 5:00 PM","cost":"$29-$34 kids / $17 adults / free under 14 months","label":"Free for baby","ages":"All ages","cat":"Outdoor & Nature","drive":"35 min","mins":35,"url":"https://www.lemosfarm.com","desc":"Train ride, petting zoo, hay rides. Free for babies under 14 months! Stroller-friendly.","src":"Curated (hand-picked)","slot":"morning","dows":[5,6],"from":"2026-08-01","to":"2026-10-31"},{"name":"Visit Children's Fairyland","loc":"Children's Fairyland","city":"Oakland","time":"10:00 AM - 5:00 PM","cost":"$19 adults / $17 children (1-17) / free under 1","label":"Free for baby","ages":"All ages","cat":"Outdoor & Nature","drive":"45 min","mins":45,"url":"https://fairyland.org","desc":"Storybook theme park for ages 0-8. Puppet shows, petting zoo, train ride, gentle rides.","src":"Curated (hand-picked)","slot":"morning","dows":[5,6],"from":"2026-08-01","to":"2026-10-31"},{"name":"Visit San Francisco Zoo","loc":"San Francisco Zoo","city":"San Francisco","time":"10:00 AM - 5:00 PM","cost":"$29-$31 adults (weekday/weekend) / free under 2","label":"Free for baby","ages":"All ages","cat":"Outdoor & Nature","drive":"45 min","mins":45,"url":"https://www.sfzoo.org","desc":"Great for babies - animals, carousel, playground. Free for under 2.","src":"Curated (hand-picked)","slot":"morning","dows":[5,6],"from":"2026-08-01","to":"2026-10-31"},{"name":"Strawberry/Olallieberry Picking at Swanton Berry Farm","loc":"Swanton Berry Farm","city":"Davenport","time":"9:00 AM - 5:00 PM","cost":"No entry fee / $8/lb","label":"Free entry / Pay per pick","ages":"All ages","cat":"Outdoor & Nature","drive":"55 min","mins":55,"url":"https://www.swantonberryfarm.com","desc":"Organic olallieberry/strawberry U-pick. Call ahead: 831-889-0850 or check Instagram for crop availability - changes weekly. Coastal - bring layers for baby! Baby carrier recommended.","src":"Curated (hand-picked)","slot":"morning","dows":[5,6],"from":"2026-08-01","to":"2026-08-30"}],"regulars":[{"name":"MV Library Lullaby Storytime (Evening for Babies)","loc":"Mountain View Public Library","city":"Mountain View","time":"6:30 PM - 7:00 PM","cost":"Free","label":"Free","ages":"0-18 months","cat":"Library & Storytimes","drive":"10 min","mins":10,"url":"https://mountainview.libcal.com/calendar","desc":"Evening baby storytime - perfect for working parents! Calm, soothing songs and stories for babies.","src":"Mountain View Public Library | Source: Curated (hand-picked)","slot":"evening","dows":[0],"from":"2026-08-03","to":"2026-08-31"},{"name":"British Swim School - Tadpole Program","loc":"British Swim School","city":"Palo Alto","time":"See schedule","cost":"~$250/month + $50 registration — free trial lesson","label":"Paid","ages":"3-36 months","cat":"Classes & Groups","drive":"5 min","mins":5,"url":"https://britishswimschool.com/palo-alto/programs/","desc":"Gentle water acclimation swim lessons. 3-36 months with parent in the water. Warm pool, small classes. Free trial lesson (Smart Start Guarantee).","src":"Curated (hand-picked)","slot":"anytime","dows":[0,3],"from":"2026-07-30","to":"2026-10-26"},{"name":"The Little Gym - Bugs Class","loc":"The Little Gym","city":"Mountain View","time":"See schedule","cost":"~$76/month — free intro visit available","label":"Paid","ages":"4 months - 2.5 years","cat":"Classes & Groups","drive":"10 min","mins":10,"url":"https://www.thelittlegym.com/california-mountain-view/classes/","desc":"Parent-child gym classes. Bugs (4-10mo): tummy time, crawling, sensory play, songs. Free introductory visit available - call to schedule.","src":"Curated (hand-picked)","slot":"anytime","dows":[0,3],"from":"2026-07-30","to":"2026-10-26"},{"name":"My Gym - Little Bundles & Tiny Tykes","loc":"My Gym Palo Alto","city":"Palo Alto","time":"See schedule","cost":"~$110/month (try 1 week for $29)","label":"Paid","ages":"6 weeks - 21 months","cat":"Classes & Groups","drive":"5 min","mins":5,"url":"https://www.mygym.com/paloalto","desc":"Little Bundles (6wk-6mo), Tiny Tykes (3-12mo). Music, movement, and play. $29 trial week available. ~$110/month after.","src":"Curated (hand-picked)","slot":"anytime","dows":[0,3],"from":"2026-07-30","to":"2026-10-26"},{"name":"Music Together - Baby & Family Music","loc":"Music Together Menlo Park","city":"Menlo Park","time":"See schedule","cost":"$305/semester (10 weeks) — free demo class available","label":"Paid","ages":"0-8 months (babies) / 0-5 years (mixed)","cat":"Classes & Groups","drive":"10 min","mins":10,"url":"https://www.mt-mp.com/schedule.html","desc":"Early childhood music classes. Babies class (0-8mo) and mixed-age (birth-5yr). Singing, instruments, movement. Free demo class available - call 650-799-1624.","src":"Curated (hand-picked)","slot":"anytime","dows":[0,3],"from":"2026-07-30","to":"2026-10-26"},{"name":"FIT4MOM Stroller Strides","loc":"FIT4MOM SF Peninsula","city":"Palo Alto","time":"See schedule","cost":"Paid monthly (first class FREE)","label":"Paid (first class free)","ages":"6 weeks+ (in stroller)","cat":"Classes & Groups","drive":"5 min","mins":5,"url":"https://sfpeninsula.fit4mom.com","desc":"Outdoor stroller fitness class for moms with babies. Strength, cardio, community. Start ~6 weeks postpartum. First class is always free!","src":"Curated (hand-picked)","slot":"anytime","dows":[0,3],"from":"2026-07-30","to":"2026-10-26"},{"name":"Gymboree Play & Music","loc":"Gymboree","city":"San Mateo","time":"See schedule","cost":"Monthly membership (first class FREE)","label":"Paid (first class free)","ages":"0-5 years","cat":"Classes & Groups","drive":"20 min","mins":20,"url":"https://www.gymboreeclasses.com/en/locations/CA/San-Mateo/","desc":"Play, music, and art classes for babies and toddlers. Age-appropriate developmental activities. First class free - try before committing.","src":"Curated (hand-picked)","slot":"anytime","dows":[0,3],"from":"2026-07-30","to":"2026-10-26"},{"name":"MV Library Outdoor Storytime at Pioneer Park","loc":"Pioneer Park (outdoors)","city":"Mountain View","time":"10:30 AM - 11:00 AM","cost":"Free","label":"Free","ages":"All ages","cat":"Library & Storytimes","drive":"10 min","mins":10,"url":"https://mountainview.libcal.com/calendar","desc":"Outdoor storytime at Pioneer Park. No registration needed, weather permitting. Stroller-friendly grassy park!","src":"Mountain View Public Library | Source: Curated (hand-picked)","slot":"morning","dows":[1],"from":"2026-08-04","to":"2026-08-25"},{"name":"MV Library Baby Storytime (0-18mo) + Stay & Play","loc":"Mountain View Public Library","city":"Mountain View","time":"10:30 AM - 11:15 AM","cost":"Free","label":"Free","ages":"0-18 months","cat":"Library & Storytimes","drive":"10 min","mins":10,"url":"https://mountainview.libcal.com/calendar","desc":"Musical storytime with books, bounces, and dancing. Stay & Play afterward. Great for babies!","src":"Mountain View Public Library | Source: Curated (hand-picked)","slot":"morning","dows":[2],"from":"2026-08-05","to":"2026-09-02"},{"name":"Mountain View Music on Castro (Free Weekly)","loc":"200 Block Castro Street","city":"Mountain View","time":"5:00 PM - 6:45 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"10 min","mins":10,"url":"https://www.mountainview.gov/our-city/departments/community-services/music-on-castro","desc":"Free live music on the pedestrian street. Walkable, flat, great for strollers.","src":"City of Mountain View | Source: Curated (hand-picked)","slot":"evening","dows":[2],"from":"2026-08-05","to":"2026-09-02"},{"name":"Menlo Park Summer Concert (Free)","loc":"Fremont Park","city":"Menlo Park","time":"6:00 PM - 8:00 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"10 min","mins":10,"url":"https://www.menlopark.gov/Government/Departments/Library-and-Community-Services/Events/Community-events/Summer-Concert-Series","desc":"Free live concert in the park. Relaxed vibe, great for families with babies. Bring a blanket.","src":"City of Menlo Park | Source: Curated (hand-picked)","slot":"evening","dows":[2,4],"from":"2026-07-31","to":"2026-08-12"},{"name":"Redwood City Music in the Park (Free)","loc":"Stafford Park","city":"Redwood City","time":"6:00 PM - 8:00 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"15 min","mins":15,"url":"https://www.redwoodcity.org/musicinthepark","desc":"Free weekly live music in the park. Bring lawn chairs.","src":"City of Redwood City | Source: Curated (hand-picked)","slot":"evening","dows":[2],"from":"2026-08-05","to":"2026-08-19"},{"name":"Sunnyvale Downtown Summer Concert (Free)","loc":"Historic Murphy Avenue","city":"Sunnyvale","time":"6:00 PM - 8:30 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"15 min","mins":15,"url":"https://sunnyvaledowntown.org/events","desc":"Free live music on Sunnyvale's pedestrian street. Great stroller-friendly walkable area.","src":"Sunnyvale Downtown | Source: Curated (hand-picked)","slot":"evening","dows":[2],"from":"2026-08-05","to":"2026-08-26"},{"name":"Sunnyvale Baby Lapsit & Playtime (0-12mo)","loc":"Sunnyvale Public Library","city":"Sunnyvale","time":"10:30 AM - 12:00 PM","cost":"Free","label":"Free","ages":"0-12 months","cat":"Library & Storytimes","drive":"15 min","mins":15,"url":"https://www.library.sunnyvale.ca.gov/events","desc":"Baby lapsit storytime followed by open stay-and-play time. Specifically for babies 0-12 months.","src":"Sunnyvale Public Library | Source: Curated (hand-picked)","slot":"morning","dows":[3],"from":"2026-07-30","to":"2026-08-27"},{"name":"Los Altos Farmers' Market","loc":"Los Altos Farmers' Market","city":"Los Altos","time":"4:00 PM - 8:00 PM","cost":"Free entry","label":"Free","ages":"All ages","cat":"Community Events","drive":"10 min","mins":10,"url":"","desc":"Weekly farmers market. Great stroller walk, fresh produce, and samples!","src":"Curated (hand-picked)","slot":"afternoon","dows":[3],"from":"2026-07-30","to":"2026-10-29"},{"name":"Redwood City Kids Movie (FREE 6pm kids film)","loc":"Courthouse Square","city":"Redwood City","time":"6:00 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"15 min","mins":15,"url":"https://www.redwoodcity.org/residents/redwood-city-events/movies","desc":"Free outdoor kids movie double-bill night. Kids film at 6pm (feature at 8:30pm). Bring blanket/chairs. Open plaza.","src":"City of Redwood City | Source: Curated (hand-picked)","slot":"evening","dows":[3],"from":"2026-07-30","to":"2026-08-27"},{"name":"Campbell Summer Concert: Orchard City Green (Free)","loc":"Orchard City Green","city":"Campbell","time":"6:30 PM - 8:00 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"25 min","mins":25,"url":"https://www.campbellca.gov/280/Summer-Concert-Series","desc":"Free Thursday concert series in downtown Campbell's open green space.","src":"City of Campbell | Source: Curated (hand-picked)","slot":"evening","dows":[3],"from":"2026-07-30","to":"2026-08-27"},{"name":"San Jose Downtown Farmers' Market","loc":"San Jose Downtown Farmers' Market","city":"San Jose","time":"10:00 AM - 2:00 PM","cost":"Free entry","label":"Free","ages":"All ages","cat":"Community Events","drive":"25 min","mins":25,"url":"","desc":"Weekly farmers market. Great stroller walk, fresh produce, and samples!","src":"Curated (hand-picked)","slot":"morning","dows":[4],"from":"2026-07-31","to":"2026-10-30"},{"name":"Mountain View Concerts on the Plaza","loc":"Civic Center Plaza","city":"Mountain View","time":"6:00 PM - 7:30 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"10 min","mins":10,"url":"https://www.mountainview.gov/our-city/departments/community-services/special-events/concerts-on-the-plaza","desc":"Free weekly outdoor concert at Civic Center Plaza. Food trucks and beer/wine available. Very stroller-friendly paved plaza.","src":"City of Mountain View | Source: Curated (hand-picked)","slot":"evening","dows":[4],"from":"2026-07-31","to":"2026-09-04"},{"name":"Redwood City Music on the Square (Free)","loc":"Courthouse Square","city":"Redwood City","time":"6:00 PM - 8:00 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"15 min","mins":15,"url":"https://www.redwoodcity.org/residents/redwood-city-events/music","desc":"Free outdoor concert at Courthouse Square. Flat open plaza, very stroller-friendly.","src":"City of Redwood City | Source: Curated (hand-picked)","slot":"evening","dows":[4],"from":"2026-07-31","to":"2026-09-04"},{"name":"Palo Alto Art Center - Family Drop-In","loc":"Palo Alto Art Center","city":"Palo Alto","time":"10:00 AM - 5:00 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Outdoor & Nature","drive":"5 min","mins":5,"url":"https://www.cityofpaloalto.org/Departments/Community-Services/Arts-Sciences/Palo-Alto-Art-Center","desc":"Free art center with rotating exhibits. Family Days with art-making activities for kids.","src":"Curated (hand-picked)","slot":"morning","dows":[5,6],"from":"2026-08-01","to":"2026-10-31"},{"name":"PA Library: Saturday Family Storytime (Mitchell Park)","loc":"Mitchell Park Library","city":"Palo Alto","time":"10:30 AM - 11:00 AM","cost":"Free","label":"Free","ages":"0-5 years","cat":"Library & Storytimes","drive":"5 min","mins":5,"url":"https://paloalto.bibliocommons.com/v2/events","desc":"Saturday morning family storytime. Songs, rhymes, and stories. Continues through August.","src":"Palo Alto City Library | Source: Curated (hand-picked)","slot":"morning","dows":[5],"from":"2026-08-01","to":"2026-09-05"},{"name":"Shakespeare in the Park: Antony & Cleopatra (Free)","loc":"Red Morton Park Amphitheater","city":"Redwood City","time":"6:00 PM - 7:30 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"15 min","mins":15,"url":"https://www.eventbrite.com/e/free-shakespeare-in-the-parks-antony-and-cleopatra-in-red-morton-park-tickets-1991008316471","desc":"Free outdoor Shakespeare. ~90 min, no intermission. Flat grassy lawn, stroller-friendly. No reservations needed.","src":"Shakespeare in the Park | Source: Curated (hand-picked)","slot":"evening","dows":[5,6],"from":"2026-08-15","to":"2026-08-30"},{"name":"Downtown Palo Alto Farmers' Market","loc":"Downtown Palo Alto Farmers' Market","city":"Palo Alto","time":"8:00 AM - 12:00 PM","cost":"Free entry","label":"Free","ages":"All ages","cat":"Community Events","drive":"5 min","mins":5,"url":"https://www.cityofpaloalto.org/Departments/Community-Services/Arts-Sciences/Farmers-Market","desc":"Weekly farmers market. Great stroller walk, fresh produce, and samples!","src":"Curated (hand-picked)","slot":"morning","dows":[5],"from":"2026-08-01","to":"2026-10-31"},{"name":"Half Moon Bay Farmers' Market","loc":"Half Moon Bay Farmers' Market","city":"Half Moon Bay","time":"9:00 AM - 1:00 PM","cost":"Free entry","label":"Free","ages":"All ages","cat":"Community Events","drive":"35 min","mins":35,"url":"","desc":"Weekly farmers market. Great stroller walk, fresh produce, and samples!","src":"Curated (hand-picked)","slot":"morning","dows":[5],"from":"2026-08-01","to":"2026-10-31"},{"name":"San Mateo Farmers' Market","loc":"San Mateo Farmers' Market","city":"San Mateo","time":"9:00 AM - 1:00 PM","cost":"Free entry","label":"Free","ages":"All ages","cat":"Community Events","drive":"20 min","mins":20,"url":"","desc":"Weekly farmers market. Great stroller walk, fresh produce, and samples!","src":"Curated (hand-picked)","slot":"morning","dows":[5],"from":"2026-08-01","to":"2026-10-31"},{"name":"Redwood City Farmers' Market","loc":"Redwood City Farmers' Market","city":"Redwood City","time":"9:00 AM - 1:00 PM","cost":"Free entry","label":"Free","ages":"All ages","cat":"Community Events","drive":"15 min","mins":15,"url":"","desc":"Weekly farmers market. Great stroller walk, fresh produce, and samples!","src":"Curated (hand-picked)","slot":"morning","dows":[5],"from":"2026-08-01","to":"2026-10-31"},{"name":"Sunnyvale Farmers' Market","loc":"Sunnyvale Farmers' Market","city":"Sunnyvale","time":"9:00 AM - 1:00 PM","cost":"Free entry","label":"Free","ages":"All ages","cat":"Community Events","drive":"15 min","mins":15,"url":"","desc":"Weekly farmers market. Great stroller walk, fresh produce, and samples!","src":"Curated (hand-picked)","slot":"morning","dows":[5],"from":"2026-08-01","to":"2026-10-31"},{"name":"Mountain View Farmers' Market","loc":"Mountain View Farmers' Market","city":"Mountain View","time":"9:00 AM - 1:00 PM","cost":"Free entry","label":"Free","ages":"All ages","cat":"Community Events","drive":"10 min","mins":10,"url":"https://www.mountainview.gov/our-city/departments/community-services/farmers-market","desc":"Weekly farmers market. Great stroller walk, fresh produce, and samples!","src":"Curated (hand-picked)","slot":"morning","dows":[6],"from":"2026-08-02","to":"2026-10-25"},{"name":"Menlo Park Farmers' Market","loc":"Menlo Park Farmers' Market","city":"Menlo Park","time":"9:00 AM - 1:00 PM","cost":"Free entry","label":"Free","ages":"All ages","cat":"Community Events","drive":"10 min","mins":10,"url":"","desc":"Weekly farmers market. Great stroller walk, fresh produce, and samples!","src":"Curated (hand-picked)","slot":"morning","dows":[6],"from":"2026-08-02","to":"2026-10-25"},{"name":"California Ave Farmers' Market","loc":"California Ave Farmers' Market","city":"Palo Alto","time":"9:00 AM - 1:00 PM","cost":"Free entry","label":"Free","ages":"All ages","cat":"Community Events","drive":"5 min","mins":5,"url":"https://www.cityofpaloalto.org/Departments/Community-Services/Arts-Sciences/Farmers-Market","desc":"Weekly farmers market. Great stroller walk, fresh produce, and samples!","src":"Curated (hand-picked)","slot":"morning","dows":[6],"from":"2026-08-02","to":"2026-10-25"}],"events":[{"name":"PA Library: Bilingual Storytime Spanish/English (Thu - College Terrace)","loc":"College Terrace Library","city":"Palo Alto","time":"10:30 AM - 11:00 AM","cost":"Free","label":"Free","ages":"0-5 years","cat":"Library & Storytimes","drive":"5 min","mins":5,"url":"https://paloalto.bibliocommons.com/v2/events","desc":"Bilingual storytime in Spanish and English with songs, rhymes, and movement.","src":"Palo Alto City Library | Source: Curated (hand-picked)","slot":"morning","date":"2026-07-30","dow":3},{"name":"Vintage Media Lab","loc":"Rinconada Library","city":"Palo Alto","time":"12:00PM - 2:00PM","cost":"Free","label":"Free","ages":"All ages","cat":"Library & Storytimes","drive":"5 min","mins":5,"url":"https://paloalto.bibliocommons.com/events/6a270e7b703c3363002d2521","desc":"Preserve your old photographs, home movies, records and cassettes!How to Access Check the Vintage Media Lab page. If appointments are still available for the month, click the Book@Rinconada button ...","src":"Palo Alto City Library","slot":"midday","date":"2026-07-30","dow":3},{"name":"Los Altos Summer Concert (Free)","loc":"Hillview Park","city":"Los Altos","time":"6:30 PM - 8:00 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"10 min","mins":10,"url":"https://www.losaltosca.gov/766/2026-Summer-Concert-Series","desc":"Free summer concert in the park. Bring a blanket. Grassy field, stroller-friendly.","src":"City of Los Altos | Source: Curated (hand-picked)","slot":"evening","date":"2026-07-30","dow":3},{"name":"PA Library: Family Storytime (Fri - Downtown Library)","loc":"Downtown Library","city":"Palo Alto","time":"10:30 AM - 11:00 AM","cost":"Free","label":"Free","ages":"0-5 years","cat":"Library & Storytimes","drive":"5 min","mins":5,"url":"https://paloalto.bibliocommons.com/v2/events","desc":"Family storytime with songs, rhymes, and stories.","src":"Palo Alto City Library | Source: Curated (hand-picked)","slot":"morning","date":"2026-07-31","dow":4},{"name":"Family Storytime","loc":"Downtown Library","city":"Palo Alto","time":"10:30AM - 11:00AM","cost":"Free","label":"Free","ages":"0-5 years","cat":"Library & Storytimes","drive":"5 min","mins":5,"url":"https://paloalto.bibliocommons.com/events/6931edd1b5ff4730005608f6","desc":"Join Librarian Heidi on Friday mornings at 10:30AM for Family Storytime at Downtown Library. Come sing, rhyme, and read stories with us! While this storytime will be geared towards those older than...","src":"Palo Alto City Library","slot":"morning","date":"2026-07-31","dow":4},{"name":"Palo Alto Family Movie Night: Hoppers","loc":"Mitchell Park Athletics Fields","city":"Palo Alto","time":"7:30 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"5 min","mins":5,"url":"https://www.paloalto.gov","desc":"Free outdoor family movie night. Gates open 7pm, movie at sunset ~7:30pm. Bring blanket/chairs. Flat grass.","src":"City of Palo Alto | Source: Curated (hand-picked)","slot":"evening","date":"2026-07-31","dow":4},{"name":"Free Outdoor Movie: Super Mario Galaxy","loc":"Whisman Park","city":"Mountain View","time":"8:30 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"10 min","mins":10,"url":"https://www.mountainview.gov/our-city/departments/community-services/special-events/summer-outdoor-movie-night-series","desc":"Free outdoor movie night. Bring a blanket or lawn chair. Flat grass park - stroller-friendly.","src":"City of Mountain View | Source: Curated (hand-picked)","slot":"evening","date":"2026-07-31","dow":4},{"name":"Saturday Board Games Day","loc":"Downtown Library","city":"Palo Alto","time":"10:00AM - 6:00PM","cost":"Free","label":"Free","ages":"All ages","cat":"Library & Storytimes","drive":"5 min","mins":5,"url":"https://paloalto.bibliocommons.com/events/69484721571fb4d550be9788","desc":"Drop in for a full day of modern board gaming at the Downtown Library! The group meets every 1st Saturday from 10 AM-6 PM.Attendees can bring their own games to play or jump-in with others. Please ...","src":"Palo Alto City Library","slot":"morning","date":"2026-08-01","dow":5},{"name":"Mindfulness Meditation","loc":"Mitchell Park Library","city":"Palo Alto","time":"1:00PM - 2:00PM","cost":"Free","label":"Free","ages":"All ages","cat":"Library & Storytimes","drive":"5 min","mins":5,"url":"https://paloalto.bibliocommons.com/events/68faeb383cbc052f008160f6","desc":"Come and improve your mental and physical health in mindfulness meditation sessions led by Phuong Pham. Each session is 30 minutes of sitting meditation and 15 minutes of releasing meditation follo...","src":"Palo Alto City Library","slot":"midday","date":"2026-08-01","dow":5},{"name":"Disco Bubbles with Daisy","loc":"Children's Library","city":"Palo Alto","time":"3:00PM - 4:00PM","cost":"Free","label":"Free","ages":"0-2 years","cat":"Library & Storytimes","drive":"5 min","mins":5,"url":"https://paloalto.bibliocommons.com/events/69fd17aef89ee15800515554","desc":"Join us at the Children's Library in the Secret Garden for an afternoon disco bubble show with Daisy!Daisy's mission is to spread smiles through kindness and joy, building dreams and memories throu...","src":"Palo Alto City Library","slot":"afternoon","date":"2026-08-01","dow":5},{"name":"Music and Puppets with Mr. Elephant","loc":"Children's Library","city":"Palo Alto","time":"4:30PM - 5:30PM","cost":"Free","label":"Free","ages":"0-2 years","cat":"Library & Storytimes","drive":"5 min","mins":5,"url":"https://paloalto.bibliocommons.com/events/69fd185143b41b3d0064f7c5","desc":"Join us at the Children's Library in the Secret Garden to enjoy tunes with musician Mr. Elephant!Mr. Elephant is an Oakland-based speech therapist who makes award-winning music for little learners ...","src":"Palo Alto City Library","slot":"afternoon","date":"2026-08-01","dow":5},{"name":"LIBI Play Space","loc":"Oshman Family JCC","city":"Palo Alto","time":"9:30 AM - 12:00 PM","cost":"Free (no membership required)","label":"Free","ages":"0-3 years","cat":"Special Events","drive":"5 min","mins":5,"url":"https://paloaltojcc.org/libi-play-space-weekly","desc":"הורים לקטנטנים מוזמנים לבוא להינות יחד עם הקטנטנים באוירה נעימה ובטוחה","src":"Oshman Family JCC","slot":"morning","date":"2026-08-05","dow":2},{"name":"Sunnyvale Sunset Movie (Free Outdoor)","loc":"Serra Park","city":"Sunnyvale","time":"7:40 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"15 min","mins":15,"url":"https://www.sunnyvale.ca.gov/recreation-and-community/special-events","desc":"Free outdoor movie: The Wild Robot. Bring blanket/chairs. Flat park.","src":"City of Sunnyvale | Source: Curated (hand-picked)","slot":"evening","date":"2026-08-07","dow":4},{"name":"Redwood City Kids Rock! Morning Concert (Free)","loc":"Courthouse Square","city":"Redwood City","time":"10:00 AM - 12:00 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"15 min","mins":15,"url":"https://www.redwoodcity.org","desc":"Saturday morning kids concert series! Perfect timing for babies. Flat open plaza, very stroller-friendly.","src":"City of Redwood City | Source: Curated (hand-picked)","slot":"morning","date":"2026-08-08","dow":5},{"name":"Palo Alto Twilight Concert: Legally Blue (blues ensemble)","loc":"Rinconada Park","city":"Palo Alto","time":"6:30 PM - 9:00 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"5 min","mins":5,"url":"https://www.paloalto.gov/Departments/Community-Services/Arts-Sciences/Palo-Alto-Childrens-Theatre/Twilight-Concert-Series","desc":"Free outdoor blues concert at Rinconada Park. Bring a blanket, food trucks on site. Very stroller-friendly.","src":"City of Palo Alto | Source: Curated (hand-picked)","slot":"evening","date":"2026-08-08","dow":5},{"name":"Infant First Aid & CPR Class at OFJCC","loc":"Oshman Family JCC","city":"Palo Alto","time":"9:30 AM - 12:00 PM","cost":"See website (registration required)","label":"Check website","ages":"New parents","cat":"Classes & Groups","drive":"5 min","mins":5,"url":"https://paloaltojcc.org/youth-family-upcoming-events/","desc":"Infant First Aid & CPR class at OFJCC. Essential for new parents. Registration required.","src":"OFJCC | Source: Curated (hand-picked)","slot":"morning","date":"2026-08-09","dow":6},{"name":"Palo Alto Family Movie Night: Super Mario Galaxy Movie","loc":"Mitchell Park Athletics Fields","city":"Palo Alto","time":"7:30 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"5 min","mins":5,"url":"https://www.paloalto.gov","desc":"Free outdoor family movie night. Gates open 7pm, movie at sunset ~7:30pm. Bring blanket/chairs. Flat grass.","src":"City of Palo Alto | Source: Curated (hand-picked)","slot":"evening","date":"2026-08-14","dow":4},{"name":"Sunnyvale Sunset Movie (Free Outdoor)","loc":"Columbia Park","city":"Sunnyvale","time":"7:40 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"15 min","mins":15,"url":"https://www.sunnyvale.ca.gov/recreation-and-community/special-events","desc":"Free outdoor movie: Super Mario Galaxy Movie. Bring blanket/chairs. Flat park.","src":"City of Sunnyvale | Source: Curated (hand-picked)","slot":"evening","date":"2026-08-14","dow":4},{"name":"Free Outdoor Movie: Lilo & Stitch (live action)","loc":"Rengstorff Park","city":"Mountain View","time":"8:30 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"10 min","mins":10,"url":"https://www.mountainview.gov/our-city/departments/community-services/special-events/summer-outdoor-movie-night-series","desc":"Free outdoor movie night. Bring a blanket or lawn chair. Flat grass park - stroller-friendly.","src":"City of Mountain View | Source: Curated (hand-picked)","slot":"evening","date":"2026-08-14","dow":4},{"name":"Coyote Point Summerfest (Free)","loc":"Coyote Point Recreation Area","city":"San Mateo","time":"12:00 PM - 4:00 PM","cost":"Free admission / $6 parking","label":"Free","ages":"All ages","cat":"Community Events","drive":"20 min","mins":20,"url":"https://www.smcgov.org/parks/coyote-point-summerfest-community-celebration","desc":"Giant kites, taiko drumming, Ballet Folklorico, train rides, food trucks. Flat waterfront park, very baby-friendly!","src":"San Mateo County Parks | Source: Curated (hand-picked)","slot":"midday","date":"2026-08-15","dow":5},{"name":"Космический квест по чтению «Тайна Девятой Планеты» | 'The Mystery of the Ninth Planet'","loc":"Oshman Family JCC","city":"Palo Alto","time":"See website","cost":"Varies","label":"Check website","ages":"0-5 years","cat":"Special Events","drive":"5 min","mins":5,"url":"https://izba-chitalnya.com/","desc":"In RussianДетский клуб «Изба-Читальня»приглашает детей 4-10 лет на авторский космический квест по чтению «Тайна Девятой Планеты»!","src":"Oshman Family JCC","slot":"anytime","date":"2026-08-15","dow":5},{"name":"Sunnyvale Sunset Movie (Free Outdoor)","loc":"Murphy Park","city":"Sunnyvale","time":"7:40 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"15 min","mins":15,"url":"https://www.sunnyvale.ca.gov/recreation-and-community/special-events","desc":"Free outdoor movie: A Minecraft Movie. Bring blanket/chairs. Flat park.","src":"City of Sunnyvale | Source: Curated (hand-picked)","slot":"evening","date":"2026-08-21","dow":4},{"name":"Palo Alto Festival of the Arts","loc":"University Avenue","city":"Palo Alto","time":"10:00 AM - 6:00 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Special Events","drive":"5 min","mins":5,"url":"https://www.paloaltochamber.com/festival-of-the-arts/","desc":"250+ artists on University Ave, live music stages, Kids' Chalk-a-Lot activity area, food vendors. Wide boulevard, very stroller-friendly. Free admission and parking.","src":"Palo Alto Chamber | Source: Curated (hand-picked)","slot":"morning","date":"2026-08-22","dow":5},{"name":"Music in the Park: Hindustani Sarangi Concert","loc":"Mitchell Park","city":"Palo Alto","time":"4:00 PM - 5:30 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"5 min","mins":5,"url":"https://www.eventbrite.com/e/music-in-the-park-series-hindustani-sarangi-concert-tickets-1989799252127","desc":"Free classical Indian music in the park. Calm afternoon concert - great for babies. Flat grass, stroller-friendly.","src":"Palo Alto Parks | Source: Curated (hand-picked)","slot":"afternoon","date":"2026-08-22","dow":5},{"name":"Palo Alto Festival of the Arts","loc":"University Avenue","city":"Palo Alto","time":"10:00 AM - 6:00 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Special Events","drive":"5 min","mins":5,"url":"https://www.paloaltochamber.com/festival-of-the-arts/","desc":"250+ artists on University Ave, live music stages, Kids' Chalk-a-Lot activity area, food vendors. Wide boulevard, very stroller-friendly. Free admission and parking.","src":"Palo Alto Chamber | Source: Curated (hand-picked)","slot":"morning","date":"2026-08-23","dow":6},{"name":"ICC/LIBI: Moms Talk -  August Session","loc":"Oshman Family JCC","city":"Palo Alto","time":"See website","cost":"Varies","label":"Check website","ages":"0-5 years","cat":"Special Events","drive":"5 min","mins":5,"url":"https://www.tickettailor.com/events/oshmanfamilyjcc/2270297/select-date?ref=oshman_jcc","desc":"אמהות מדברות: קבוצה חווייתית לאמהות אחרי לידה עם גלי בק","src":"Oshman Family JCC","slot":"anytime","date":"2026-08-27","dow":3},{"name":"Sunnyvale Sunset Movie (Free Outdoor)","loc":"Sunnyvale Community Center","city":"Sunnyvale","time":"7:40 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"15 min","mins":15,"url":"https://www.sunnyvale.ca.gov/recreation-and-community/special-events","desc":"Free outdoor movie: Elio. Bring blanket/chairs. Flat park.","src":"City of Sunnyvale | Source: Curated (hand-picked)","slot":"evening","date":"2026-08-28","dow":4},{"name":"PV Palooza Summer Music Festival (Free)","loc":"Portola Valley Town Center","city":"Portola Valley","time":"10:30 AM - 8:30 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"15 min","mins":15,"url":"https://www.pvpalooza.com/","desc":"All-day free music festival with 20 local bands on 4 stages. Family-friendly community event.","src":"PV Palooza | Source: Curated (hand-picked)","slot":"morning","date":"2026-08-29","dow":5},{"name":"Start the Year Together: OFJCC Community Holiday Fair","loc":"Oshman Family JCC","city":"Palo Alto","time":"See website","cost":"Varies","label":"Check website","ages":"0-5 years","cat":"Special Events","drive":"5 min","mins":5,"url":"https://www.tickettailor.com/checkout/new-session/id/8633267/chk/0b2d8e521b54fabc13db0adad1b565ad/?ref=oshman_jcc","desc":"Enjoy a joyful, family-friendly High Holidays celebration","src":"Oshman Family JCC","slot":"anytime","date":"2026-08-30","dow":6},{"name":"PA Library: Family Storytime (Tue - Children's Library)","loc":"Children's Library","city":"Palo Alto","time":"10:30 AM - 11:00 AM","cost":"Free","label":"Free","ages":"0-5 years","cat":"Library & Storytimes","drive":"5 min","mins":5,"url":"https://paloalto.bibliocommons.com/v2/events","desc":"Family storytime with songs, rhymes, and stories.","src":"Palo Alto City Library | Source: Curated (hand-picked)","slot":"morning","date":"2026-09-01","dow":1},{"name":"PA Library: Little Ones Storytime (Wed - Children's Library)","loc":"Children's Library","city":"Palo Alto","time":"10:30 AM - 11:00 AM","cost":"Free","label":"Free","ages":"0-3 years","cat":"Library & Storytimes","drive":"5 min","mins":5,"url":"https://paloalto.bibliocommons.com/v2/events","desc":"Storytime for babies and toddlers with songs, rhymes, and movement activities.","src":"Palo Alto City Library | Source: Curated (hand-picked)","slot":"morning","date":"2026-09-02","dow":2},{"name":"PA Library: Bilingual Storytime Spanish/English (Thu - College Terrace)","loc":"College Terrace Library","city":"Palo Alto","time":"10:30 AM - 11:00 AM","cost":"Free","label":"Free","ages":"0-5 years","cat":"Library & Storytimes","drive":"5 min","mins":5,"url":"https://paloalto.bibliocommons.com/v2/events","desc":"Bilingual storytime in Spanish and English with songs, rhymes, and movement.","src":"Palo Alto City Library | Source: Curated (hand-picked)","slot":"morning","date":"2026-09-03","dow":3},{"name":"PA Library: Family Storytime (Fri - Downtown Library)","loc":"Downtown Library","city":"Palo Alto","time":"10:30 AM - 11:00 AM","cost":"Free","label":"Free","ages":"0-5 years","cat":"Library & Storytimes","drive":"5 min","mins":5,"url":"https://paloalto.bibliocommons.com/v2/events","desc":"Family storytime with songs, rhymes, and stories.","src":"Palo Alto City Library | Source: Curated (hand-picked)","slot":"morning","date":"2026-09-04","dow":4},{"name":"ICC: Bike Ride, Picnic and Tashlich for Families at Shoreline Lake","loc":"Oshman Family JCC","city":"Palo Alto","time":"See website","cost":"Varies","label":"Check website","ages":"0-5 years","cat":"Special Events","drive":"5 min","mins":5,"url":"https://www.tickettailor.com/checkout/new-session/id/8614086/chk/508f41c372fde71820566cca954e09f6/?ref=oshman_jcc","desc":"רכיבת אופניים, פיקניק ותשליך בפארק שורליין","src":"Oshman Family JCC","slot":"anytime","date":"2026-09-13","dow":6},{"name":"The Great Glass Pumpkin Patch","loc":"Palo Alto Art Center","city":"Palo Alto","time":"10:00 AM - 5:00 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Special Events","drive":"5 min","mins":5,"url":"https://www.paloalto.gov/Departments/Community-Services/Arts-Sciences/Palo-Alto-Art-Center/Special-Events/Pumpkins","desc":"Thousands of hand-blown glass pumpkins on the Art Center lawn with live glassblowing demos. Free admission. Outdoors and stroller-friendly - glass is on low tables, so keep baby carried or strapped in.","src":"City of Palo Alto | Source: Curated (hand-picked)","slot":"morning","date":"2026-09-26","dow":5},{"name":"The Great Glass Pumpkin Patch","loc":"Palo Alto Art Center","city":"Palo Alto","time":"10:00 AM - 5:00 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Special Events","drive":"5 min","mins":5,"url":"https://www.paloalto.gov/Departments/Community-Services/Arts-Sciences/Palo-Alto-Art-Center/Special-Events/Pumpkins","desc":"Thousands of hand-blown glass pumpkins on the Art Center lawn with live glassblowing demos. Free admission. Outdoors and stroller-friendly - glass is on low tables, so keep baby carried or strapped in.","src":"City of Palo Alto | Source: Curated (hand-picked)","slot":"morning","date":"2026-09-27","dow":6},{"name":"Half Moon Bay Art & Pumpkin Festival","loc":"Main Street (Miramontes to Spruce)","city":"Half Moon Bay","time":"9:00 AM - 5:00 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Special Events","drive":"35 min","mins":35,"url":"https://hmbpumpkinfest.com/","desc":"Free street festival with a Family Fun Zone at 620 Main Street - non-competitive pumpkin carving, pie-eating contests, and a diaper changing/family rest station. Giant champion pumpkins on display. Very crowded; carrier beats stroller. Coastal fog - bring layers.","src":"HMB Art & Pumpkin Festival | Source: Curated (hand-picked)","slot":"morning","date":"2026-10-17","dow":5},{"name":"Half Moon Bay Art & Pumpkin Festival","loc":"Main Street (Miramontes to Spruce)","city":"Half Moon Bay","time":"9:00 AM - 5:00 PM","cost":"Free","label":"Free","ages":"All ages","cat":"Special Events","drive":"35 min","mins":35,"url":"https://hmbpumpkinfest.com/","desc":"Free street festival with a Family Fun Zone at 620 Main Street - non-competitive pumpkin carving, pie-eating contests, and a diaper changing/family rest station. Giant champion pumpkins on display. Very crowded; carrier beats stroller. Coastal fog - bring layers.","src":"HMB Art & Pumpkin Festival | Source: Curated (hand-picked)","slot":"morning","date":"2026-10-18","dow":6}],"tbd":[{"name":"Apple U-Pick at Gizdich Ranch","loc":"Gizdich Ranch","city":"Watsonville","cost":"Pay per pound","label":"Check website","ages":"All ages","cat":"Outdoor & Nature","drive":"1 hr","mins":60,"url":"https://www.gizdich-ranch.com/u-pick","desc":"Apple picking opens in late September and runs into fall. Card only - no cash at U-pick. Call 831-722-1056 for exact opening dates and current varieties. Flat orchard rows; stroller works on dry ground.","src":"Curated (hand-picked)"},{"name":"Baby Lapsit & Playtime","loc":"Sunnyvale Public Library","city":"Sunnyvale","cost":"Free","label":"Free","ages":"0-18 months","cat":"Library & Storytimes","drive":"15 min","mins":15,"url":"https://www.library.sunnyvale.ca.gov/Home/Components/Calendar/Event/11876/74","desc":"Source: Sunnyvale Public Library","src":""},{"name":"Family Fun Night at Fairwood Park: Unique Derique","loc":"Sunnyvale Public Library","city":"Sunnyvale","cost":"Free","label":"Free","ages":"All ages","cat":"Library & Storytimes","drive":"15 min","mins":15,"url":"https://www.library.sunnyvale.ca.gov/Home/Components/Calendar/Event/11670/74","desc":"Source: Sunnyvale Public Library","src":""},{"name":"Family Fun Night at Fairwood Park: Wylding Wood","loc":"Sunnyvale Public Library","city":"Sunnyvale","cost":"Free","label":"Free","ages":"All ages","cat":"Library & Storytimes","drive":"15 min","mins":15,"url":"https://www.library.sunnyvale.ca.gov/Home/Components/Calendar/Event/11672/74","desc":"Source: Sunnyvale Public Library","src":""},{"name":"Family Fun Night at Washington Park: Professor Pepper","loc":"Sunnyvale Public Library","city":"Sunnyvale","cost":"Free","label":"Free","ages":"All ages","cat":"Library & Storytimes","drive":"15 min","mins":15,"url":"https://www.library.sunnyvale.ca.gov/Home/Components/Calendar/Event/11674/74","desc":"Source: Sunnyvale Public Library","src":""},{"name":"Family Fun Night at Washington Park: Ventriloquist Marc Griffiths","loc":"Sunnyvale Public Library","city":"Sunnyvale","cost":"Free","label":"Free","ages":"All ages","cat":"Library & Storytimes","drive":"15 min","mins":15,"url":"https://www.library.sunnyvale.ca.gov/Home/Components/Calendar/Event/11675/74","desc":"Source: Sunnyvale Public Library","src":""},{"name":"Family Storytime","loc":"Sunnyvale Public Library","city":"Sunnyvale","cost":"Free","label":"Free","ages":"All ages","cat":"Library & Storytimes","drive":"15 min","mins":15,"url":"https://www.library.sunnyvale.ca.gov/Home/Components/Calendar/Event/11694/74","desc":"Source: Sunnyvale Public Library","src":""},{"name":"Free Family Concert: 2026 Cabrillo Festival (Santa Cruz)","loc":"Funcheap - Kids & Families","city":"Various (Bay Area)","cost":"See website","label":"Check website","ages":"All ages","cat":"Community Events","drive":"Varies","mins":999,"url":"https://sf.funcheap.com/free-family-concert-2026-cabrillo-festival-santa-cruz/","desc":"Source: Funcheap - Kids & Families","src":""},{"name":"Halloween Hoopla Parade & Trick-or-Treat","loc":"Fremont Park & Downtown Menlo Park","city":"Menlo Park","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"10 min","mins":10,"url":"https://www.menlopark.gov/Citywide-calendar","desc":"Costume parade to Fremont Park, then trick-or-treating at downtown shops, plus carnival games, crafts, and a magic show. Usually the Saturday before Halloween - confirm the 2026 date on the city calendar.","src":"Curated (hand-picked)"},{"name":"Halloween at the Junior Museum & Zoo","loc":"Palo Alto Junior Museum & Zoo","city":"Palo Alto","cost":"See website / free under 12 months","label":"Free for baby","ages":"0-9 years","cat":"Special Events","drive":"5 min","mins":5,"url":"https://www.paloaltozoo.org/Programs/Family-Programs","desc":"Annual Halloween party - trick-or-treating through the zoo plus animal encounters. Tickets sell out early; confirm the 2026 date and on-sale time.","src":"Curated (hand-picked)"},{"name":"Halloween on Castro Street","loc":"Downtown Castro Street","city":"Mountain View","cost":"Free","label":"Free","ages":"All ages","cat":"Community Events","drive":"10 min","mins":10,"url":"https://www.mountainview.gov/our-city/departments/community-services/special-events","desc":"Decorated storefronts and trick-or-treating along downtown Castro Street, with discounts for anyone in costume. Flat, walkable, stroller-friendly. Confirm the 2026 date with the city.","src":"Curated (hand-picked)"},{"name":"SF's 2026 Nihonmachi Street Fair in Japantown (August 1-2)","loc":"Funcheap - Kids & Families","city":"Various (Bay Area)","cost":"See website","label":"Check website","ages":"All ages","cat":"Community Events","drive":"Varies","mins":999,"url":"https://sf.funcheap.com/sfs-2026-nihonmachi-street-fair-in-japantown-august-1-2-2/","desc":"Free two-day festival brings Japanese American and AAPI culture, food, live performances, artisans, and family activities to San Francisco's Japantown One of San Francisco's longtime summer traditi...","src":"Funcheap - Kids & Families"},{"name":"Vivid: Immerse Your Senses","loc":"California Academy of Sciences","city":"San Francisco","cost":"Included with Cal Academy admission ($49-55 adults / free under 2)","label":"Free for baby","ages":"All ages","cat":"Special Events","drive":"45 min","mins":45,"url":"https://www.calacademy.org/exhibits/vivid-immerse-your-senses","desc":"Experience six unique ecosystems through HD video projections, soundscapes, and scents. Open thru Sept. 6.","src":"California Academy of Sciences"},{"name":"“Castro Art Mart” Mini Block Party on Noe St. (Every First Sunday)","loc":"Funcheap - Kids & Families","city":"Various (Bay Area)","cost":"See website","label":"Check website","ages":"All ages","cat":"Community Events","drive":"Varies","mins":999,"url":"https://sf.funcheap.com/castro-art-mart-mini-block-party-on-noe-st-every-first-sunday-49/","desc":"The Castro Art Mart Features LGBTQ Artists, Live Music, and Drag Performances every 1st Sunday of the month on Noe St and Market St (Next to the Lookout Bar), 11-5pm. Come enjoy this Free, Family &...","src":"Funcheap - Kids & Families"}],"from":"2026-07-30","to":"2026-10-31","built":"2026-07-30"};
+const DOW  = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const FULL = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const MON  = ["January","February","March","April","May","June","July",
+              "August","September","October","November","December"];
+const SLOTS = [["morning","Morning"],["midday","Midday"],
+               ["afternoon","Afternoon"],["evening","Evening"],["anytime","Anytime"]];
+
+const S = {tab:"today", free:false, dist:999, day:null};
+
+const esc = s => String(s??"").replace(/[&<>"']/g,c=>
+  ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const mkDate = s => {const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d);};
+const dowOf = s => (mkDate(s).getDay()+6)%7;   // 0 = Monday
+
+const realToday = iso(new Date());
+const today = realToday < D.from ? D.from : (realToday > D.to ? D.to : realToday);
+S.day = today;
+
+const CHEV = `<svg class="chev" width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="M1.5 1.5 6.5 6.5 1.5 11.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+function badge(label){
+  if(label==="Free")                       return ["b-ok","Free"];
+  if(label==="Free for baby")              return ["b-ok","Free for baby"];
+  if(label && label.startsWith("Free entry")) return ["b-ok","Free entry"];
+  if(label && label.includes("first class")) return ["b-ok","1st free"];
+  if(label==="Paid")                       return ["b-pay","Paid"];
+  return ["b-neutral","Check"];
+}
+const isFree = x => {
+  const l = x.label||"";
+  return l==="Free" || l==="Free for baby" ||
+         l.startsWith("Free entry") || l.includes("first class");
+};
+const passes = x => (!S.free || isFree(x)) && (x.mins||999) <= S.dist;
+
+function row(x, opts={}){
+  const [cls,txt] = badge(x.label);
+  const bits = [];
+  if(opts.time!==false && x.time && !/^see |^anytime$/i.test(x.time)) bits.push(esc(x.time));
+  if(x.city) bits.push(esc(x.city) + (x.drive && !/see map|varies/i.test(x.drive) ? ", " + esc(x.drive) : ""));
+  if(x.ages) bits.push(esc(x.ages));
+
+  const days = opts.days && x.dows
+    ? `<div class="days">${DOW.map((d,i)=>`<span class="day${x.dows.includes(i)?" on":""}">${d}</span>`).join("")}</div>`
+    : "";
+
+  const dl = [];
+  if(x.cost)                  dl.push(`<dt>Cost</dt><dd>${esc(x.cost)}</dd>`);
+  if(x.loc && x.loc!==x.name) dl.push(`<dt>Where</dt><dd>${esc(x.loc)}${x.city?", "+esc(x.city):""}</dd>`);
+  if(x.time)                  dl.push(`<dt>When</dt><dd>${esc(x.time)}</dd>`);
+  if(x.src)                   dl.push(`<dt>Source</dt><dd>${esc(x.src)}</dd>`);
+
+  const hasDetail = x.desc || dl.length || x.url;
+
+  return `<div class="row">
+    <button class="summary" type="button" aria-expanded="false" onclick="toggleRow(this)">
+      <span class="rtop">
+        <span class="rtitle">${esc(x.name)}</span>
+        <span class="badge ${cls}">${txt}</span>
+        ${hasDetail?CHEV:""}
+      </span>
+      ${bits.length?`<span class="sub">${bits.map(b=>`<span>${b}</span>`).join("")}</span>`:""}
+      ${days}
+    </button>
+    ${hasDetail?`<div class="detail">
+      ${x.desc?`<p>${esc(x.desc)}</p>`:""}
+      ${dl.length?`<dl>${dl.join("")}</dl>`:""}
+      ${x.url?`<a href="${esc(x.url)}" target="_blank" rel="noopener">Open venue page</a>`:""}
+    </div>`:""}
+  </div>`;
+}
+
+const group = (items, opts) => `<div class="group">${items.map(x=>row(x,opts)).join("")}</div>`;
+const header = (title, right="") =>
+  `<div class="hdr">${title}${right?`<span class="rt">${right}</span>`:""}</div>`;
+const blank = msg =>
+  `<div class="blank"><b>Nothing here</b><span>${msg}</span></div>`;
+
+function viewToday(){
+  const dw = dowOf(S.day), d = mkDate(S.day);
+  const evs  = D.events.filter(e => e.date===S.day && passes(e));
+  const regs = D.regulars.filter(r => r.dows.includes(dw) && S.day>=r.from && S.day<=r.to && passes(r));
+  const plcs = D.places.filter(p => p.dows.includes(dw) && S.day>=p.from && S.day<=p.to && passes(p));
+  const on = [...evs, ...regs];
+  tally(on.length + plcs.length);
+
+  let h = `<div class="daynav">
+    <h2>${S.day===today?"Today":FULL[dw]}<small>${FULL[dw]}, ${MON[d.getMonth()]} ${d.getDate()}</small></h2>
+    <button class="step" onclick="shift(-1)" ${S.day<=D.from?"disabled":""} aria-label="Previous day">‹</button>
+    <button class="step" onclick="shift(1)"  ${S.day>=D.to  ?"disabled":""} aria-label="Next day">›</button>
+  </div>`;
+
+  if(!on.length && !plcs.length)
+    return h + `<div style="margin-top:18px">${blank("Try a longer drive, or turn off Free only.")}</div>`;
+
+  for(const [key,name] of SLOTS){
+    const inSlot = on.filter(x => (x.slot||"anytime")===key);
+    if(inSlot.length) h += header(name) + group(inSlot);
+  }
+  if(plcs.length) h += header("Open today", `${plcs.length}`) + group(plcs,{time:false});
+  return h;
+}
+
+function viewEvents(){
+  const evs = D.events.filter(e => e.date>=today && passes(e));
+  const tbd = D.tbd.filter(passes);
+  tally(evs.length + tbd.length);
+
+  if(!evs.length && !tbd.length)
+    return `<div style="margin-top:20px">${blank("Try a longer drive, or turn off Free only.")}</div>`;
+
+  const byDate = new Map();
+  for(const e of evs){
+    if(!byDate.has(e.date)) byDate.set(e.date,[]);
+    byDate.get(e.date).push(e);
+  }
+
+  let h = "";
+  for(const [ds,list] of byDate){
+    const d = mkDate(ds);
+    h += header(`${FULL[dowOf(ds)]}, ${MON[d.getMonth()].slice(0,3)} ${d.getDate()}`) + group(list);
+  }
+  if(tbd.length) h += header("Date not announced yet", `${tbd.length}`) + group(tbd,{time:false});
+  return h;
+}
+
+function viewPlaces(){
+  const ps = D.places.filter(passes);
+  tally(ps.length);
+  if(!ps.length) return `<div style="margin-top:20px">${blank("Try a longer drive.")}</div>`;
+  return header("Sorted by drive time", `${ps.length}`) + group(ps,{days:true,time:false});
+}
+
+function viewWeekly(){
+  const rs = D.regulars.filter(passes);
+  tally(rs.length);
+  if(!rs.length) return `<div style="margin-top:20px">${blank("Try a longer drive, or turn off Free only.")}</div>`;
+  let h = "";
+  for(let i=0;i<7;i++){
+    const day = rs.filter(r => r.dows.includes(i));
+    if(day.length) h += header(FULL[i], `${day.length}`) + group(day,{days:false});
+  }
+  return h;
+}
+
+function toggleRow(btn){
+  const r = btn.parentElement;
+  if(!r.querySelector(".detail")) return;
+  const open = r.classList.toggle("open");
+  btn.setAttribute("aria-expanded", open ? "true" : "false");
+}
+function tally(n){
+  document.getElementById("tally").textContent = n === 1 ? "1 result" : n + " results";
+}
+function shift(n){
+  const d = mkDate(S.day); d.setDate(d.getDate()+n);
+  const next = iso(d);
+  if(next>=D.from && next<=D.to){ S.day = next; render(); }
+}
+function go(tab){
+  S.tab = tab;
+  document.querySelectorAll(".seg button").forEach(b =>
+    b.setAttribute("aria-selected", b.id === "t"+"-"+tab ? "true" : "false"));
+  render();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+function toggleFree(){
+  S.free = !S.free;
+  document.getElementById("f-free").setAttribute("aria-pressed", S.free?"true":"false");
+  render();
+}
+function setDist(v){ S.dist = +v; render(); }
+
+function render(){
+  document.getElementById("view").innerHTML =
+      S.tab==="today"  ? viewToday()
+    : S.tab==="events" ? viewEvents()
+    : S.tab==="places" ? viewPlaces()
+    :                    viewWeekly();
+}
+
+const f = mkDate(D.from), t = mkDate(D.to);
+document.getElementById("built").textContent =
+  `${D.places.length} places, ${D.regulars.length} weekly regulars and ${D.events.length} events ` +
+  `from ${MON[f.getMonth()]} ${f.getDate()} to ${MON[t.getMonth()]} ${t.getDate()}. Updated ${D.built}.`;
+render();
+</script>
+
+</body>
+</html>
